@@ -50,21 +50,34 @@ export function drawLevel(ctx, platforms, doors) {
     ctx.fillStyle = '#222';
     ctx.fillRect(sx - 1, sy - 1, DOOR_W + 2, DOOR_H + 2);
 
-    // Door face
-    ctx.fillStyle = d.used ? '#2a2a2a' : DOOR_COLORS[d.type];
-    ctx.fillRect(sx, sy, DOOR_W, DOOR_H);
+    if (d.open) {
+      // Open doorway: dark interior with a thin lit edge on each side
+      ctx.fillStyle = '#080808';
+      ctx.fillRect(sx, sy, DOOR_W, DOOR_H);
+      ctx.fillStyle = '#3a3020';
+      ctx.fillRect(sx, sy, 2, DOOR_H);
+      ctx.fillRect(sx + DOOR_W - 2, sy, 2, DOOR_H);
+    } else if (d.used) {
+      // Spent / empty door — dark, no label
+      ctx.fillStyle = '#1e1e1e';
+      ctx.fillRect(sx, sy, DOOR_W, DOOR_H);
+    } else {
+      // Closed door: colored face
+      ctx.fillStyle = DOOR_COLORS[d.type];
+      ctx.fillRect(sx, sy, DOOR_W, DOOR_H);
 
-    if (!d.used) {
-      // Door type indicator stripe
+      // Highlight stripe
       ctx.fillStyle = 'rgba(255,255,255,0.15)';
       ctx.fillRect(sx + 2, sy + 2, DOOR_W - 4, 4);
 
-      // Label
-      ctx.fillStyle = 'rgba(255,255,255,0.6)';
-      ctx.font = '5px monospace';
-      ctx.textAlign = 'center';
+      // Pickup label (B / A only — normal doors have no label)
       const label = d.type === 'bullet' ? 'B' : d.type === 'arms' ? 'A' : '';
-      if (label) ctx.fillText(label, sx + DOOR_W / 2, sy + DOOR_H - 6);
+      if (label) {
+        ctx.fillStyle = 'rgba(255,255,255,0.6)';
+        ctx.font = '5px monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText(label, sx + DOOR_W / 2, sy + DOOR_H - 6);
+      }
     }
   }
 

@@ -15,7 +15,7 @@ export const PLAYER_CROUCH_H = 14;
 
 // Player movement
 export const PLAYER_WALK_SPD  = 1.6;
-export const PLAYER_JUMP_VY   = -5.5; // initial upward velocity
+export const PLAYER_JUMP_VY   = -7.5; // initial upward velocity
 export const GRAVITY           = 0.32;
 export const PLAYER_MAX_FALL   = 8;
 
