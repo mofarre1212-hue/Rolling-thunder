@@ -8,11 +8,14 @@ import {
   FLOOR_Y_LOWER,
   PLAYER_BULLET_Y_STAND, PLAYER_BULLET_Y_CROUCH,
   BULLET_W, BULLET_H,
-  COL_PLAYER, COL_PLAYER_HURT,
   DOOR_W, DOOR_H, DOOR_INTERACT_DIST
 } from '../constants.js';
 import { input } from '../input.js';
 import { applyPhysics } from '../systems/physics.js';
+import { drawPlayerStand, drawPlayerCrouch } from '../sprites/playerSprite.js';
+
+// Frames between each walk-cycle toggle
+const WALK_FRAME_INTERVAL = 8;
 
 export function createPlayer() {
   return {
@@ -23,22 +26,23 @@ export function createPlayer() {
     crouchH: PLAYER_CROUCH_H,
     vx: 0,
     vy: 0,
-    facing: 1,       // 1=right, -1=left
+    facing: 1,
     crouching: false,
     onGround: true,
     currentFloorY: FLOOR_Y_LOWER,
     hp: PLAYER_MAX_HP,
-    invuln: 0,        // invulnerability frames remaining
+    invuln: 0,
     dead: false,
 
-    // Weapon state
-    weapon: 'pistol', // 'pistol' | 'machinegun'
+    walkFrame: 0,
+    walkTimer: 0,
+
+    weapon: 'pistol',
     pistolAmmo: PISTOL_AMMO_MAX,
     machinegunAmmo: 0,
     fireCooldown: 0,
     emptyFireCooldown: 0,
 
-    // Door state
     inDoor: false,
     doorRef: null,
 
@@ -65,17 +69,35 @@ export function createPlayer() {
       const down  = input.held('ArrowDown');
       const jump  = input.pressed('KeyZ') || input.pressed('Space');
 
-      // Crouch
+      const wasCrouching = this.crouching;
       this.crouching = down && this.onGround;
 
-      // Horizontal
+      // When crouch state changes while grounded, snap y so the bottom stays
+      // flush with the floor. Without this, the smaller hitbox floats above the
+      // surface for several frames until gravity catches up.
+      if (wasCrouching !== this.crouching && this.onGround) {
+        const newH = this.crouching ? this.crouchH : this.h;
+        this.y = this.currentFloorY - newH;
+      }
+
       if (!this.crouching) {
         if (left)  { this.x -= PLAYER_WALK_SPD; this.facing = -1; }
         if (right) { this.x += PLAYER_WALK_SPD; this.facing = 1;  }
       }
       this.x = Math.max(0, this.x);
 
-      // Jump
+      // Walk animation
+      const moving = (left || right) && this.onGround && !this.crouching;
+      if (moving) {
+        this.walkTimer++;
+        if (this.walkTimer >= WALK_FRAME_INTERVAL) {
+          this.walkTimer = 0;
+          this.walkFrame = 1 - this.walkFrame;
+        }
+      } else {
+        this.walkTimer = 0;
+      }
+
       if (jump && this.onGround && !this.crouching) {
         this.vy = PLAYER_JUMP_VY;
         this.onGround = false;
@@ -96,7 +118,6 @@ export function createPlayer() {
           if (this.machinegunAmmo === 0) this.weapon = 'pistol';
         }
       } else {
-        // Pistol
         if (this.pistolAmmo > 0) {
           if (shootPressed && this.fireCooldown === 0) {
             this._spawnBullet(bullets, PISTOL_BULLET_SPD);
@@ -104,7 +125,6 @@ export function createPlayer() {
             this.fireCooldown = 12;
           }
         } else {
-          // Empty pistol: one slow bullet, must clear first
           const noPistolBullets = !bullets.some(b => b.owner === 'player');
           if (shootPressed && noPistolBullets && this.emptyFireCooldown === 0) {
             this._spawnBullet(bullets, PISTOL_BULLET_SPD);
@@ -129,10 +149,8 @@ export function createPlayer() {
     _handleDoorEnter(doors) {
       if (!input.pressed('ArrowUp')) return;
       for (const d of doors) {
-        // Must be on same floor level and adjacent
-        const sameLevelY = this.currentFloorY;
         const doorFloorY = d.y + DOOR_H;
-        if (Math.abs(sameLevelY - doorFloorY) > 4) continue;
+        if (Math.abs(this.currentFloorY - doorFloorY) > 4) continue;
         const dist = Math.abs((this.x + this.w / 2) - (d.x + DOOR_W / 2));
         if (dist <= DOOR_INTERACT_DIST) {
           this.inDoor = true;
@@ -157,7 +175,6 @@ export function createPlayer() {
     },
 
     _updateInDoor(bullets) {
-      // Exit door when player presses shoot (fire as they exit) or move
       const exitShoot = input.pressed('KeyX');
       const exitMove  = input.pressed('ArrowLeft') || input.pressed('ArrowRight') || input.pressed('ArrowDown');
       if (exitShoot || exitMove) {
@@ -175,28 +192,16 @@ export function createPlayer() {
     },
 
     draw(ctx, camX) {
-      if (this.inDoor) return; // hidden inside door
-
-      const sx = this.x - camX;
-      const h  = this.crouching ? this.crouchH : this.h;
-      const sy = this.y + (this.h - h); // anchor bottom
-
-      // Blink during invuln
+      if (this.inDoor) return;
       if (this.invuln > 0 && Math.floor(this.invuln / 4) % 2 === 0) return;
 
-      ctx.fillStyle = this.hp < PLAYER_MAX_HP && this.invuln > 0 ? COL_PLAYER_HURT : COL_PLAYER;
-      ctx.fillRect(sx, sy, this.w, h);
+      const sx = this.x - camX;
+      const sy = this.y; // entity.y is always the top of the current hitbox
 
-      // Head
-      ctx.fillStyle = '#d4aa60';
-      if (!this.crouching) ctx.fillRect(sx + 2, sy, 8, 7);
-
-      // Facing indicator (gun arm)
-      ctx.fillStyle = '#a08040';
-      if (this.facing === 1) {
-        ctx.fillRect(sx + this.w, sy + (this.crouching ? 4 : 8), 4, 3);
+      if (this.crouching) {
+        drawPlayerCrouch(ctx, sx, sy, this.facing);
       } else {
-        ctx.fillRect(sx - 4, sy + (this.crouching ? 4 : 8), 4, 3);
+        drawPlayerStand(ctx, sx, sy, this.facing, this.walkFrame);
       }
     }
   };

@@ -14,6 +14,7 @@ canvas.width  = CANVAS_W;
 canvas.height = CANVAS_H;
 canvas.style.width  = `${CANVAS_W * SCALE}px`;
 canvas.style.height = `${CANVAS_H * SCALE}px`;
+ctx.imageSmoothingEnabled = false;
 
 // ── Game state ────────────────────────────────────────────────────────────────
 let state;   // 'title' | 'play' | 'dead' | 'clear'
