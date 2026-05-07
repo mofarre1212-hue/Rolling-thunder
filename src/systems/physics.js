@@ -1,33 +1,38 @@
-import {
-  GRAVITY, PLAYER_MAX_FALL,
-  FLOOR_Y_LOWER, FLOOR_Y_UPPER
-} from '../constants.js';
-
-// Returns the floor Y that an entity standing at (x, w) should land on,
-// given the set of platforms. Returns null if no floor beneath.
-function resolveFloor(ex, ew, platforms) {
-  let best = null;
-  for (const p of platforms) {
-    // Only solid-top platforms (entity must be above the top surface)
-    if (ex + ew <= p.x || ex >= p.x + p.w) continue;
-    const surface = p.y;
-    if (best === null || surface < best) best = surface;
-  }
-  return best;
-}
+import { GRAVITY, PLAYER_MAX_FALL } from '../constants.js';
 
 export function applyPhysics(entity, platforms) {
   entity.vy = Math.min((entity.vy || 0) + GRAVITY, PLAYER_MAX_FALL);
-  entity.y += entity.vy;
 
   const h = entity.crouching ? entity.crouchH : entity.h;
-  const floorY = resolveFloor(entity.x, entity.w, platforms);
+  // Bottom of entity before this frame's vertical movement
+  const prevBottom = entity.y + h;
 
-  if (floorY !== null && entity.y + h >= floorY) {
-    entity.y = floorY - h;
+  entity.y += entity.vy;
+
+  let landedSurface = null;
+  for (const p of platforms) {
+    // Horizontal overlap check
+    if (entity.x + entity.w <= p.x || entity.x >= p.x + p.w) continue;
+
+    const surface = p.y;
+
+    // One-way: only land on a surface if the entity's bottom was at or above
+    // it before this frame. Prevents walking under a ledge from snapping up.
+    if (prevBottom > surface + 1) continue;
+
+    // Did the entity cross (or reach) the surface this frame?
+    if (entity.y + h >= surface) {
+      if (landedSurface === null || surface < landedSurface) {
+        landedSurface = surface;
+      }
+    }
+  }
+
+  if (landedSurface !== null) {
+    entity.y = landedSurface - h;
     entity.vy = 0;
     entity.onGround = true;
-    entity.currentFloorY = floorY;
+    entity.currentFloorY = landedSurface;
   } else {
     entity.onGround = false;
   }
