@@ -14,17 +14,35 @@ const DOOR_COLORS = {
 };
 
 export function drawLevel(ctx, platforms, doors) {
-  // Background
+  // Background fill
   ctx.fillStyle = COL_BG;
   ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
 
-  // Back wall stripe
+  // Upper wall — gray industrial panels
   ctx.fillStyle = COL_WALL;
   ctx.fillRect(0, 0, CANVAS_W, FLOOR_Y_UPPER - 4);
 
-  // Mid-wall stripe (between upper and lower floor)
-  ctx.fillStyle = '#1a1a1a';
+  // Louvered horizontal panel lines on upper wall
+  ctx.fillStyle = '#383844';
+  for (let py = 5; py < FLOOR_Y_UPPER - 6; py += 9) {
+    ctx.fillRect(0, py, CANVAS_W, 2);
+  }
+
+  // Vertical panel dividers on upper wall
+  ctx.fillStyle = '#3e3e4a';
+  for (let px = 48; px < CANVAS_W; px += 48) {
+    ctx.fillRect(px, 0, 1, FLOOR_Y_UPPER - 4);
+  }
+
+  // Mid-wall — between upper and lower floor
+  ctx.fillStyle = '#484454';
   ctx.fillRect(0, FLOOR_Y_UPPER - 4, CANVAS_W, FLOOR_Y_LOWER - FLOOR_Y_UPPER + 4);
+
+  // Louvered lines on mid-wall
+  ctx.fillStyle = '#343040';
+  for (let py = FLOOR_Y_UPPER + 3; py < FLOOR_Y_LOWER - 4; py += 9) {
+    ctx.fillRect(0, py, CANVAS_W, 2);
+  }
 
   // Platforms
   for (const p of platforms) {
@@ -36,7 +54,7 @@ export function drawLevel(ctx, platforms, doors) {
     ctx.fillRect(sx, sy, p.w, p.h);
 
     // Ledge highlight edge
-    ctx.fillStyle = p.y === FLOOR_Y_LOWER ? '#3d6030' : '#5a5a28';
+    ctx.fillStyle = p.y === FLOOR_Y_LOWER ? '#00c0c0' : '#009090';
     ctx.fillRect(sx, sy, p.w, 2);
   }
 

@@ -65,10 +65,10 @@ export const STAGE_TIME_SECONDS = 90;
 export const HUD_H = 20;
 
 // Colors (placeholder art palette)
-export const COL_BG           = '#1a1a2e';
-export const COL_FLOOR_LOWER  = '#2d4a22';
-export const COL_FLOOR_UPPER  = '#3a3a1a';
-export const COL_WALL         = '#111';
+export const COL_BG           = '#282830';
+export const COL_FLOOR_LOWER  = '#009898'; // teal arcade floor
+export const COL_FLOOR_UPPER  = '#007878'; // slightly darker teal for upper ledge
+export const COL_WALL         = '#50505c'; // medium gray industrial wall
 export const COL_PLAYER       = '#c8a050';
 export const COL_PLAYER_HURT  = '#ff4444';
 export const COL_ENEMY        = '#8b3a3a';
