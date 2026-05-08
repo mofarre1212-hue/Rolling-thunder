@@ -185,14 +185,14 @@ export function createPlayer() {
     },
 
     takeDamage() {
-      if (this.invuln > 0 || this.dead) return;
-      this.hp--;
-      this.invuln = PLAYER_INVULN_FRAMES;
-      if (this.hp <= 0) this.dead = true;
+      if (this.dead) return;
+      this.hp--;        // decrement lives immediately
+      this.dead = true; // one shot = instant death
     },
 
     draw(ctx, camX) {
       if (this.inDoor) return;
+      if (this.dead)   return; // hidden during death sequence
       if (this.invuln > 0 && Math.floor(this.invuln / 4) % 2 === 0) return;
 
       const sx = this.x - camX;

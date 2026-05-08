@@ -1,6 +1,7 @@
 import {
   CANVAS_W, CANVAS_H, SCALE, STAGE_TIME_SECONDS,
   ENEMY_DEATH_FRAMES, ENEMY_SCORE_GRUNT, ENEMY_SCORE_RIFLEMAN,
+  PLAYER_MAX_HP,
 } from './constants.js';
 import { input } from './input.js';
 import { camera } from './camera.js';
@@ -23,15 +24,25 @@ ctx.imageSmoothingEnabled = false;
 
 // ── Game state ────────────────────────────────────────────────────────────────
 let state;   // 'title' | 'play' | 'dead' | 'clear'
-let player, doors, bullets, enemies, score, timeLeft;
+let player, doors, bullets, enemies, score, timeLeft, deathTimer;
 
+// Full new-game reset (title → play)
 function initGame() {
-  player   = createPlayer();
-  doors    = buildDoors();
-  bullets  = [];
-  enemies  = [];
-  score    = 0;
-  timeLeft = STAGE_TIME_SECONDS;
+  score = 0;
+  _resetLevel(PLAYER_MAX_HP);
+}
+
+// Restart the level while preserving remaining lives and score.
+// Called automatically after the death pause expires.
+function _resetLevel(livesRemaining) {
+  const savedHp = livesRemaining;
+  player    = createPlayer();
+  player.hp = savedHp;        // carry lives forward
+  doors     = buildDoors();
+  bullets   = [];
+  enemies   = [];
+  timeLeft  = STAGE_TIME_SECONDS;
+  deathTimer = 0;
 
   for (const t of spawnTriggers) t.fired = false;
 
@@ -42,7 +53,6 @@ function initGame() {
 // ── Rendering helpers ─────────────────────────────────────────────────────────
 function drawBullets() {
   for (const b of bullets) {
-    // Muzzle-flash-style bright core + subtle glow rect
     ctx.fillStyle = b.owner === 'player' ? '#ffff66' : '#ff5522';
     ctx.fillRect(camera.toScreenX(b.x), b.y, b.w, b.h);
     ctx.fillStyle = b.owner === 'player' ? '#ffffff' : '#ffaa44';
@@ -83,6 +93,19 @@ function update() {
   // ── Play ────────────────────────────────────────────────────────────────────
   timeLeft -= 1 / 60;
 
+  // Death pause — freeze gameplay, count down, then respawn or game-over
+  if (player.dead) {
+    deathTimer++;
+    if (deathTimer >= 90) {           // ~1.5 s pause
+      if (player.hp <= 0) {
+        state = 'dead';               // no lives left → game over
+      } else {
+        _resetLevel(player.hp);       // lives remain → restart level
+      }
+    }
+    return; // no further updates while player is dead
+  }
+
   // Spawn waves
   runSpawner(camera, spawnTriggers, enemies);
 
@@ -104,7 +127,7 @@ function update() {
     if (bullets[i].dead) bullets.splice(i, 1);
   }
 
-  // Score newly-dead enemies, prune after death animation
+  // Score newly-dead enemies; prune after death animation
   for (const e of enemies) {
     if (e.dead && !e.scored) {
       score += e.type === 'grunt' ? ENEMY_SCORE_GRUNT : ENEMY_SCORE_RIFLEMAN;
@@ -119,8 +142,8 @@ function update() {
 
   camera.follow(player);
 
-  if (player.dead || timeLeft <= 0) state = 'dead';
-  if (player.x > WORLD_W - 60)     state = 'clear';
+  if (timeLeft <= 0)            state = 'dead';
+  if (player.x > WORLD_W - 60) state = 'clear';
 }
 
 function render() {
@@ -134,10 +157,7 @@ function render() {
   }
 
   drawLevel(ctx, platforms, doors);
-
-  // Draw enemies behind bullets and player for depth read
   for (const e of enemies) e.draw(ctx, camera.x);
-
   drawBullets();
   player.draw(ctx, camera.x);
   drawHUD(ctx, player, score, timeLeft);
