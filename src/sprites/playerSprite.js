@@ -28,7 +28,6 @@ const PANTS_DD = '#121420';
 const PANTS_D  = '#242638';
 const PANTS    = '#444660';
 const PANTS_L  = '#606278';
-const PANTS_HL = '#7a7c94';
 
 const BELT     = '#181008';
 const BELT_L   = '#282010';
@@ -47,6 +46,11 @@ const GUN      = '#6a6e78';
 const GUN_L    = '#909498';
 const GUN_HL   = '#bcc0cc';
 
+const GLOVE_DD = '#060404';
+const GLOVE_D  = '#1a1410';
+const GLOVE    = '#2e221a';
+const GLOVE_L  = '#3e3028';
+
 function r(ctx, x, y, w, h, col) {
   ctx.fillStyle = col;
   ctx.fillRect(x, y, w, h);
@@ -61,199 +65,250 @@ function beginSprite(ctx, bx, by, facing) {
   }
 }
 
-// ── Standing pose — 20 × 40, side-profile right-facing ────────────────────────
-// Head is ~9px wide with face features on the right (front-facing) side only.
-// Body is wider than head to avoid the chibi/bobblehead proportion.
+// ── Standing pose — 24 × 44, side-profile right-facing ────────────────────────
+// Back of figure (left edge x≈2) = back of body. Front (right edge x≈22) = gun side.
 export function drawPlayerStand(ctx, bx, by, facing, frame) {
   beginSprite(ctx, bx, by, facing);
 
-  // ── HEAD: side profile (face points right) ────────────────────────────────
-  // Hair — back/top mass only, NO left-right symmetry
-  r(ctx,  4,  0,  7,  1, HAIR_L);   // crown highlight
-  r(ctx,  3,  1,  8,  2, HAIR);     // crown mass
-  r(ctx,  3,  1,  1,  4, HAIR_DD);  // back-of-head deep shadow
-  r(ctx,  3,  3,  4,  3, HAIR_DD);  // nape/lower hair (back half only)
+  // ── HEAD: side profile, face points right ─────────────────────────────────
+  r(ctx,  4,  0,  8,  1, HAIR_L);    // crown highlight
+  r(ctx,  3,  1,  9,  2, HAIR);      // crown mass
+  r(ctx,  3,  1,  1,  9, HAIR_DD);   // back-of-head shadow column
+  r(ctx,  4,  3,  3,  5, HAIR_DD);   // nape mass
 
-  // Forehead (visible just above eye line, rightward)
-  r(ctx,  9,  2,  4,  1, SKIN_LL);  // forehead highlight
+  r(ctx, 10,  1,  4,  2, SKIN_LL);   // forehead catch-light
+  r(ctx,  8,  3,  7,  6, SKIN);      // face block
+  r(ctx,  8,  3,  1,  6, SKIN_D);    // cheek-back shadow (profile recession)
+  r(ctx,  9,  3,  2,  1, SKIN_L);    // brow ridge
 
-  // Face block (right portion of head — profile orientation)
-  r(ctx,  7,  3,  6,  5, SKIN);     // face main
-  r(ctx,  7,  3,  1,  5, SKIN_D);   // receding-cheek shadow
-  r(ctx,  8,  3,  2,  1, SKIN_LL);  // brow ridge
+  r(ctx, 11,  4,  3,  1, SKIN_DD);   // brow shadow over eye
+  r(ctx, 11,  5,  2,  1, EYE);       // iris (single eye, front side only)
+  r(ctx, 11,  5,  1,  1, EYE_L);     // eye glint
 
-  // Single eye (right/front of face only — NOT symmetric)
-  r(ctx,  9,  5,  2,  1, EYE);
-  r(ctx,  9,  5,  1,  1, EYE_L);    // eye glint
+  r(ctx, 14,  5,  1,  2, SKIN_D);    // nose bridge (profile edge)
+  r(ctx, 15,  7,  1,  1, SKIN_DD);   // nose tip protrusion
 
-  // Nose in profile (bump at rightmost face edge)
-  r(ctx, 12,  5,  1,  2, SKIN_D);   // nose bridge shadow
-  r(ctx, 13,  6,  1,  1, SKIN_DD);  // nose tip
+  r(ctx,  8,  7,  6,  2, SKIN);      // jaw
+  r(ctx,  8,  7,  1,  2, SKIN_D);    // jaw back shadow
+  r(ctx, 10,  9,  3,  1, SKIN_D);    // jawline taper
+  r(ctx, 11, 10,  2,  1, SKIN_DD);   // chin
 
-  // Jaw/chin taper
-  r(ctx,  7,  7,  5,  2, SKIN);     // jaw
-  r(ctx,  7,  7,  1,  2, SKIN_D);   // jaw back shadow
-  r(ctx,  9,  9,  2,  1, SKIN_DD);  // chin
+  // Neck
+  r(ctx,  9, 11,  4,  2, SKIN_D);
 
-  // Neck (narrow — side view)
-  r(ctx,  8, 10,  3,  2, SKIN_D);
+  // ── COLLAR / SHIRT visible at neckline ────────────────────────────────────
+  r(ctx,  9, 13,  7,  2, SHIRT);
+  r(ctx,  9, 13,  1,  2, SHIRT_D);   // collar back shadow
 
-  // ── JACKET ────────────────────────────────────────────────────────────────
-  // Collar visible
-  r(ctx,  8, 12,  5,  2, SHIRT);
-  r(ctx,  8, 12,  1,  2, SHIRT_D);  // collar back shadow
+  // ── BACK SHOULDER ─────────────────────────────────────────────────────────
+  r(ctx,  2, 15, 10,  3, JACKET_D);
+  r(ctx,  2, 15,  1,  3, JACKET_DD);
+  r(ctx, 11, 15,  1,  3, JACKET);    // shoulder / body boundary edge
 
-  // Back shoulder (behind — darker)
-  r(ctx,  2, 13,  7,  3, JACKET_D);
-  r(ctx,  2, 13,  1,  3, JACKET_DD);
+  // ── FRONT SHOULDER CAP ────────────────────────────────────────────────────
+  r(ctx, 14, 15,  8,  3, JACKET_L);
+  r(ctx, 21, 15,  1,  3, JACKET_DD); // cap outer edge shadow
+  r(ctx, 14, 15,  5,  1, JACKET_HL); // glint row across cap top
+  r(ctx, 15, 15,  2,  1, JACKET_HL); // hot spot concentration
 
-  // Front shoulder (ahead — brighter)
-  r(ctx, 11, 13,  7,  3, JACKET_L);
-  r(ctx, 17, 13,  1,  3, JACKET_DD);
-  r(ctx, 11, 13,  3,  1, JACKET_HL); // shoulder glint
+  // ── JACKET BODY ───────────────────────────────────────────────────────────
+  r(ctx,  3, 18, 16, 10, JACKET);           // base fill
+  r(ctx,  3, 18,  2, 10, JACKET_DD);        // back deep shadow
+  r(ctx,  5, 18,  2, 10, JACKET_D);         // back shadow band
+  r(ctx, 16, 18,  3, 10, JACKET_D);         // front shadow band
+  r(ctx, 16, 23,  3,  5, JACKET_DD);        // front lower deep shadow
+  r(ctx,  7, 18,  5,  4, JACKET_L);         // chest catch-light
+  r(ctx,  8, 18,  3,  2, JACKET_HL);        // chest hotspot
+  r(ctx,  5, 23,  3,  5, JACKET_M);         // back waist panel
+  r(ctx, 13, 23,  3,  5, JACKET_M);         // front waist panel
+  r(ctx,  8, 22,  5,  2, JACKET_L);         // center-chest horizontal seam
 
-  // Jacket body — back side darker, front side lighter for 3D depth
-  r(ctx,  3, 16, 13,  9, JACKET);
-  r(ctx,  3, 16,  2,  9, JACKET_DD); // back deep shadow
-  r(ctx,  5, 16,  2,  9, JACKET_D);
-  r(ctx, 14, 16,  2,  9, JACKET_D);
-  r(ctx, 14, 22,  2,  3, JACKET_DD); // lower front shadow
-  r(ctx,  7, 16,  5,  3, JACKET_L);  // chest catch-light
-  r(ctx,  8, 16,  3,  1, JACKET_HL); // chest hot spot
-  r(ctx,  4, 21,  3,  4, JACKET_M);  // back body panel
-  r(ctx, 12, 21,  2,  4, JACKET_M);  // front body panel
+  // Shirt + lapels — continuous V-strip from collar to belt
+  r(ctx, 11, 13,  2, 15, SHIRT);            // shirt in V-opening
+  r(ctx, 13, 13,  3, 15, JACKET_L);         // lapel front face
+  r(ctx, 10, 13,  1, 15, JACKET_M);         // lapel inner shadow
 
-  // Shirt + lapel (V-neck opening — side view stripe)
-  r(ctx, 10, 12,  2, 12, SHIRT);     // shirt showing in opening
-  r(ctx, 12, 12,  2, 12, JACKET_L);  // lapel front face
-  r(ctx,  9, 12,  1, 12, JACKET_M);  // inner lapel edge
+  // ── BELT ──────────────────────────────────────────────────────────────────
+  r(ctx,  4, 28, 14,  2, BELT);
+  r(ctx,  4, 28,  4,  1, BELT_L);           // belt top catch-light
+  r(ctx,  8, 28,  5,  2, BKL);              // buckle plate
+  r(ctx,  8, 28,  3,  1, BKL_L);            // buckle glint
 
-  // Belt
-  r(ctx,  3, 25, 12,  2, BELT);
-  r(ctx,  3, 25,  4,  1, BELT_L);
-  r(ctx,  7, 25,  4,  2, BKL);
-  r(ctx,  7, 25,  2,  1, BKL_L);
+  // ── BACK ARM (behind body) ─────────────────────────────────────────────────
+  // Upper arm — tonal break at x=4 separates arm from jacket body
+  r(ctx,  2, 18,  3,  9, JACKET_D);
+  r(ctx,  2, 18,  1,  9, JACKET_DD);
+  r(ctx,  4, 18,  1,  9, JACKET_M);
+  // Forearm — slight tonal shift implies elbow bend
+  r(ctx,  2, 27,  3,  5, JACKET_D);
+  r(ctx,  2, 27,  1,  5, JACKET_DD);
+  r(ctx,  4, 27,  1,  5, JACKET_M);
+  // Gloved hand
+  r(ctx,  2, 32,  4,  3, GLOVE_D);
+  r(ctx,  2, 32,  1,  3, GLOVE_DD);
+  r(ctx,  5, 32,  1,  2, GLOVE);            // knuckle edge catch
 
-  // ── LEGS — clearly offset for side-view stride ────────────────────────────
-  const [lyL, lhL, lyR, lhR] = frame === 0
-    ? [29, 9, 32, 6]
-    : [32, 6, 29, 9];
-  // Back leg (darker, behind the body)
-  r(ctx,  6, lyL,  4, lhL, PANTS_D);
-  r(ctx,  6, lyL,  1, lhL, PANTS_DD);
-  r(ctx,  9, lyL,  1, lhL, PANTS);
-  // Front leg (lighter, ahead of the body)
-  r(ctx, 10, lyR,  4, lhR, PANTS);
-  r(ctx, 13, lyR,  1, lhR, PANTS_D);
-  r(ctx, 10, lyR,  1, lhR, PANTS_L);
+  // ── GUN ARM (front shoulder) ───────────────────────────────────────────────
+  // Upper arm — JACKET_M distinct from body for clear separation
+  r(ctx, 15, 18,  4,  8, JACKET_M);
+  r(ctx, 15, 18,  1,  8, JACKET_D);         // arm shadow side
+  r(ctx, 18, 18,  1,  8, JACKET_L);         // arm light side
+  // Forearm — same tonal structure, slight narrowing implied by shade
+  r(ctx, 16, 26,  3,  5, JACKET_M);
+  r(ctx, 16, 26,  1,  5, JACKET_D);
+  r(ctx, 18, 26,  1,  5, JACKET_L);         // forearm outer highlight
+  // Gloved hand gripping gun
+  r(ctx, 18, 25,  3,  4, GLOVE);
+  r(ctx, 18, 25,  1,  4, GLOVE_D);
+  r(ctx, 20, 25,  1,  2, GLOVE_L);          // knuckle glint
 
-  // ── COAT FLAPS — drawn over legs (long-coat silhouette) ───────────────────
-  r(ctx,  3, 27,  4, 12, JACKET_D);  // back flap
-  r(ctx,  3, 27,  1, 12, JACKET_DD);
-  r(ctx,  6, 27,  1, 12, JACKET);    // back flap front edge
-  r(ctx, 12, 27,  4, 12, JACKET);    // front flap
-  r(ctx, 15, 27,  1, 12, JACKET_D);
-  r(ctx, 12, 27,  1, 12, JACKET_L);  // front flap highlight
+  // ── GUN (pistol) — barrel at y=22, PLAYER_BULLET_Y_STAND = 22 ─────────────
+  r(ctx, 20, 21,  3,  1, GUN_HL);           // slide top catch
+  r(ctx, 19, 22,  2,  5, GUN_D);            // grip (dark material)
+  r(ctx, 21, 22,  1,  1, GUN_HL);           // slide top
+  r(ctx, 21, 23,  2,  3, GUN);              // slide body
+  r(ctx, 21, 23,  2,  1, GUN_L);            // slide top highlight
+  r(ctx, 22, 24,  1,  2, GUN_D);            // slide far edge
+  // Barrel (extends to muzzle at x=23)
+  r(ctx, 21, 21,  3,  2, GUN);
+  r(ctx, 21, 21,  3,  1, GUN_L);            // barrel top highlight
+  r(ctx, 22, 22,  2,  1, GUN_D);            // barrel underside
+  r(ctx, 23, 22,  1,  1, GUN_DD);           // muzzle
 
-  // ── BOOTS ─────────────────────────────────────────────────────────────────
-  r(ctx,  4, 37,  7,  3, BOOTS);     // back boot
-  r(ctx,  4, 37,  1,  3, BOOTS_DD);
-  r(ctx,  5, 37,  2,  1, BOOTS_L);
-  r(ctx,  4, 39,  8,  1, BOOTS_D);
-  r(ctx, 10, 37,  7,  3, BOOTS);     // front boot
-  r(ctx, 16, 37,  1,  3, BOOTS_DD);
-  r(ctx, 10, 37,  3,  1, BOOTS_HL);
-  r(ctx, 10, 39,  8,  1, BOOTS_D);
+  // ── LEGS — walk animation ──────────────────────────────────────────────────
+  const [lyB, lhB, lyF, lhF] = frame === 0
+    ? [30, 10, 33,  7]
+    : [33,  7, 30, 10];
 
-  // ── BACK ARM — barely visible at left edge, clearly separate from body ─────
-  r(ctx,  2, 17,  3,  8, JACKET_D);
-  r(ctx,  2, 17,  1,  8, JACKET_DD);
+  // Back leg (thigh + shin, darker — behind body)
+  r(ctx,  5, lyB,  4, lhB, PANTS_D);
+  r(ctx,  5, lyB,  1, lhB, PANTS_DD);
+  r(ctx,  8, lyB,  1, lhB, PANTS);
+  // Front leg (thigh + shin, lighter — in front)
+  r(ctx, 10, lyF,  4, lhF, PANTS);
+  r(ctx, 13, lyF,  1, lhF, PANTS_D);
+  r(ctx, 10, lyF,  1, lhF, PANTS_L);
 
-  // ── GUN ARM — protrudes from front shoulder, distinct from jacket body ─────
-  r(ctx, 13, 17,  4,  7, JACKET_M);  // arm (JACKET_M ≠ JACKET for visual separation)
-  r(ctx, 13, 17,  1,  7, JACKET_D);
-  // Gun
-  r(ctx, 17, 17,  4,  1, GUN_HL);   // receiver top
-  r(ctx, 17, 18,  8,  2, GUN);      // barrel
-  r(ctx, 17, 18,  4,  1, GUN_L);    // barrel top highlight
-  r(ctx, 18, 19,  6,  1, GUN_D);    // barrel underside
-  r(ctx, 16, 17,  2,  3, GUN_D);    // receiver body
-  r(ctx, 22, 20,  2,  1, GUN_DD);   // muzzle
+  // ── COAT FLAPS (drawn over legs — long-coat silhouette) ────────────────────
+  r(ctx,  3, 30,  4, 12, JACKET_D);         // back flap body
+  r(ctx,  3, 30,  1, 12, JACKET_DD);        // back flap shadow
+  r(ctx,  6, 30,  1, 12, JACKET);           // back flap front edge (tone break)
+  r(ctx, 13, 30,  4, 12, JACKET);           // front flap body
+  r(ctx, 16, 30,  1, 12, JACKET_D);         // front flap outer edge
+  r(ctx, 13, 30,  1, 12, JACKET_L);         // front flap inner highlight
+  r(ctx, 12, 30,  1,  8, JACKET_M);         // gap hint between flaps
+
+  // ── BOOTS ──────────────────────────────────────────────────────────────────
+  r(ctx,  3, 40,  7,  3, BOOTS);            // back boot body
+  r(ctx,  3, 40,  1,  3, BOOTS_DD);
+  r(ctx,  4, 40,  3,  1, BOOTS_L);          // boot top highlight
+  r(ctx,  9, 40,  1,  3, BOOTS_D);          // back boot inner edge
+  r(ctx,  3, 43,  8,  1, BOOTS_D);          // back boot sole
+  r(ctx, 10, 40,  8,  3, BOOTS);            // front boot body
+  r(ctx, 17, 40,  1,  3, BOOTS_DD);
+  r(ctx, 10, 40,  4,  1, BOOTS_HL);         // toe cap highlight
+  r(ctx, 14, 40,  3,  1, BOOTS_L);          // front boot top
+  r(ctx, 10, 43,  9,  1, BOOTS_D);          // front boot sole
 
   ctx.restore();
 }
 
-// ── Crouching pose — 20 × 26, side profile ────────────────────────────────────
+// ── Crouching pose — 24 × 28, side profile ────────────────────────────────────
 export function drawPlayerCrouch(ctx, bx, by, facing) {
   beginSprite(ctx, bx, by, facing);
 
-  // HEAD — same profile logic, slightly bowed
+  // ── HEAD — profile, slightly bowed forward ────────────────────────────────
   r(ctx,  4,  0,  7,  1, HAIR_L);
-  r(ctx,  3,  1,  7,  2, HAIR);
-  r(ctx,  3,  1,  1,  3, HAIR_DD);
-  r(ctx,  3,  3,  3,  2, HAIR_DD);
-  r(ctx,  8,  2,  3,  1, SKIN_LL);
-  r(ctx,  7,  3,  5,  4, SKIN);
-  r(ctx,  7,  3,  1,  4, SKIN_D);
-  r(ctx,  8,  3,  2,  1, SKIN_LL);   // brow
-  r(ctx,  9,  4,  2,  1, EYE);       // single eye
-  r(ctx,  9,  4,  1,  1, EYE_L);
-  r(ctx, 11,  5,  1,  1, SKIN_DD);   // nose tip
-  r(ctx,  7,  6,  3,  1, SKIN_D);    // jaw shadow
-  r(ctx,  7,  7,  2,  1, SKIN_DD);   // chin
+  r(ctx,  3,  1,  8,  2, HAIR);
+  r(ctx,  3,  1,  1,  7, HAIR_DD);
+  r(ctx,  4,  3,  3,  4, HAIR_DD);
 
-  // NECK
-  r(ctx,  8,  8,  3,  1, SKIN_D);
+  r(ctx,  9,  1,  4,  2, SKIN_LL);   // forehead
+  r(ctx,  7,  3,  6,  5, SKIN);
+  r(ctx,  7,  3,  1,  5, SKIN_D);
+  r(ctx,  8,  3,  2,  1, SKIN_L);    // brow
 
-  // JACKET — hunched, wider shoulder hump
-  r(ctx,  2, 10, 14,  3, JACKET_L);  // shoulder hump
-  r(ctx,  2, 10,  2,  3, JACKET_DD);
-  r(ctx, 14, 10,  2,  3, JACKET_DD);
-  r(ctx,  4, 10,  3,  1, JACKET_HL); // hump glint
+  r(ctx, 10,  4,  2,  1, SKIN_DD);   // brow shadow
+  r(ctx, 10,  5,  2,  1, EYE);
+  r(ctx, 10,  5,  1,  1, EYE_L);
 
-  r(ctx,  3, 13, 11,  5, JACKET);
+  r(ctx, 12,  5,  1,  2, SKIN_D);    // nose bridge
+  r(ctx, 13,  7,  1,  1, SKIN_DD);   // nose tip
+
+  r(ctx,  7,  7,  5,  2, SKIN);      // jaw
+  r(ctx,  7,  7,  1,  2, SKIN_D);
+  r(ctx,  9,  8,  2,  1, SKIN_DD);   // chin
+
+  // Neck (compressed in crouch)
+  r(ctx,  8,  9,  3,  1, SKIN_D);
+
+  // ── JACKET — hunched, wide shoulder hump ──────────────────────────────────
+  r(ctx,  2, 10, 16,  3, JACKET_L);  // hump catch-light surface
+  r(ctx,  2, 10,  2,  3, JACKET_DD); // hump back shadow
+  r(ctx, 16, 10,  2,  3, JACKET_DD); // hump front shadow
+  r(ctx,  4, 10,  4,  1, JACKET_HL); // hump glint
+  r(ctx,  5, 10,  2,  1, JACKET_HL); // hot spot
+
+  r(ctx,  3, 13, 13,  5, JACKET);    // body
   r(ctx,  3, 13,  2,  5, JACKET_DD);
   r(ctx,  5, 13,  2,  5, JACKET_D);
-  r(ctx, 12, 13,  2,  5, JACKET_D);
-  r(ctx, 12, 16,  2,  2, JACKET_DD);
-  r(ctx,  6, 13,  4,  2, JACKET_L);
-  r(ctx,  7, 13,  2,  1, JACKET_HL);
+  r(ctx, 13, 13,  3,  5, JACKET_D);
+  r(ctx, 13, 15,  3,  3, JACKET_DD); // front lower deep shadow
+  r(ctx,  7, 13,  4,  2, JACKET_L);  // chest catch-light
+  r(ctx,  8, 13,  2,  1, JACKET_HL);
 
-  r(ctx, 10, 10,  2,  7, SHIRT);     // shirt opening
-  r(ctx, 12, 10,  2,  7, JACKET_L);  // lapel
-  r(ctx,  9, 10,  1,  7, JACKET_M);  // inner lapel edge
+  // Shirt + lapels
+  r(ctx, 10, 10,  2,  8, SHIRT);
+  r(ctx, 12, 10,  2,  8, JACKET_L);
+  r(ctx,  9, 10,  1,  8, JACKET_M);
 
-  r(ctx,  3, 18, 10,  1, BELT);
-  r(ctx,  6, 18,  3,  1, BKL);
+  // Belt
+  r(ctx,  4, 18, 11,  1, BELT);
+  r(ctx,  7, 18,  4,  1, BKL);
+  r(ctx,  7, 18,  2,  1, BKL_L);
 
-  // LEGS — bent, clearly offset (back leg at x=3-6, front at x=9-12)
-  r(ctx,  3, 19,  4,  4, PANTS_D);   // back leg
+  // ── BACK ARM (mostly hidden, sliver visible) ───────────────────────────────
+  r(ctx,  2, 13,  2,  6, JACKET_DD);
+
+  // ── GUN ARM (aimed forward, horizontal) ───────────────────────────────────
+  // Upper arm
+  r(ctx, 13, 10,  4,  5, JACKET_M);
+  r(ctx, 13, 10,  1,  5, JACKET_D);
+  r(ctx, 16, 10,  1,  5, JACKET_L);
+  // Forearm extends toward gun
+  r(ctx, 14, 15,  3,  4, JACKET_M);
+  r(ctx, 14, 15,  1,  4, JACKET_D);
+  r(ctx, 16, 15,  1,  4, JACKET_L);
+  // Gloved hand
+  r(ctx, 16, 17,  3,  3, GLOVE);
+  r(ctx, 16, 17,  1,  3, GLOVE_D);
+  r(ctx, 18, 17,  1,  1, GLOVE_L);
+
+  // ── GUN — barrel at y=14, PLAYER_BULLET_Y_CROUCH = 14 ─────────────────────
+  r(ctx, 17, 13,  4,  1, GUN_HL);    // slide top
+  r(ctx, 17, 14,  2,  4, GUN_D);     // grip
+  r(ctx, 19, 13,  4,  2, GUN);       // barrel
+  r(ctx, 19, 13,  4,  1, GUN_L);     // barrel top highlight
+  r(ctx, 20, 14,  3,  1, GUN_D);     // barrel underside
+  r(ctx, 23, 14,  1,  1, GUN_DD);    // muzzle
+
+  // ── LEGS — bent, visible at sides of body ─────────────────────────────────
+  r(ctx,  3, 19,  4,  4, PANTS_D);   // back thigh
   r(ctx,  3, 19,  1,  4, PANTS_DD);
   r(ctx,  5, 19,  1,  4, PANTS);
-  r(ctx,  9, 19,  4,  4, PANTS);     // front leg
+  r(ctx,  9, 19,  4,  4, PANTS);     // front thigh
   r(ctx, 12, 19,  1,  4, PANTS_D);
   r(ctx,  9, 19,  1,  4, PANTS_L);
 
-  // BOOTS — flat squat
-  r(ctx,  2, 22,  6,  3, BOOTS);
-  r(ctx,  2, 22,  1,  3, BOOTS_DD);
-  r(ctx,  3, 22,  2,  1, BOOTS_L);
-  r(ctx,  2, 24,  7,  1, BOOTS_D);
-  r(ctx,  9, 22,  6,  3, BOOTS);
-  r(ctx, 14, 22,  1,  3, BOOTS_DD);
-  r(ctx,  9, 22,  3,  1, BOOTS_HL);
-  r(ctx,  9, 24,  7,  1, BOOTS_D);
-
-  // BACK ARM
-  r(ctx,  2, 13,  2,  6, JACKET_DD);
-
-  // GUN ARM (aimed flat)
-  r(ctx, 12, 13,  3,  5, JACKET_M);
-  r(ctx, 12, 13,  1,  5, JACKET_D);
-  r(ctx, 15, 12,  4,  1, GUN_HL);
-  r(ctx, 15, 13,  7,  2, GUN);
-  r(ctx, 15, 13,  3,  1, GUN_L);
-  r(ctx, 16, 14,  5,  1, GUN_D);
+  // ── BOOTS — flat squat stance ──────────────────────────────────────────────
+  r(ctx,  2, 23,  7,  4, BOOTS);
+  r(ctx,  2, 23,  1,  4, BOOTS_DD);
+  r(ctx,  3, 23,  3,  1, BOOTS_L);
+  r(ctx,  2, 27,  8,  1, BOOTS_D);   // sole
+  r(ctx,  9, 23,  7,  4, BOOTS);
+  r(ctx, 15, 23,  1,  4, BOOTS_DD);
+  r(ctx,  9, 23,  4,  1, BOOTS_HL);
+  r(ctx,  9, 27,  8,  1, BOOTS_D);   // sole
 
   ctx.restore();
 }

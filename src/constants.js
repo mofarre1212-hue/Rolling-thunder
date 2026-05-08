@@ -9,9 +9,9 @@ export const FLOOR_Y_UPPER  = 96;  // y of upper ledge surface
 export const LEDGE_THICKNESS = 8;
 
 // Player dimensions
-export const PLAYER_W        = 20;
-export const PLAYER_H        = 40;
-export const PLAYER_CROUCH_H = 26;
+export const PLAYER_W        = 24;
+export const PLAYER_H        = 44;
+export const PLAYER_CROUCH_H = 28;
 
 // Player movement
 export const PLAYER_WALK_SPD  = 1.6;
@@ -28,8 +28,8 @@ export const MACHINEGUN_AMMO_MAX  = 60;
 export const MACHINEGUN_FIRE_RATE = 8;
 export const BULLET_W = 6;
 export const BULLET_H = 3;
-export const PLAYER_BULLET_Y_STAND  = 20; // gun barrel row in 40px sprite
-export const PLAYER_BULLET_Y_CROUCH = 14; // gun barrel row in 26px crouch sprite
+export const PLAYER_BULLET_Y_STAND  = 22; // gun barrel row in 44px sprite
+export const PLAYER_BULLET_Y_CROUCH = 14; // gun barrel row in 28px crouch sprite
 
 // Player health / damage
 export const PLAYER_MAX_HP      = 3;
@@ -50,7 +50,7 @@ export const ENEMY_SIGHT_RANGE  = 180;
 export const ENEMY_SHOOT_RANGE  = 160;
 export const ENEMY_SHOOT_COOLDOWN = 90;
 export const ENEMY_BULLET_SPD   = 3;
-export const ENEMY_BULLET_Y_STAND  = 10; // misses crouching players (hitbox top 134)
+export const ENEMY_BULLET_Y_STAND  = 8;  // misses crouching players (hitbox top 132)
 export const ENEMY_BULLET_Y_CROUCH = 16; // hits crouching players
 
 // Enemy AI timing / tuning
@@ -65,8 +65,8 @@ export const ENEMY_SCORE_GRUNT     = 100;
 export const ENEMY_SCORE_RIFLEMAN  = 200;
 
 // Doors
-export const DOOR_W = 22;
-export const DOOR_H = 44;
+export const DOOR_W = 26;
+export const DOOR_H = 50;
 export const DOOR_INTERACT_DIST = 28;
 
 // Game timer
