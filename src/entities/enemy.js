@@ -59,8 +59,8 @@ export function createEnemy(x, floorY, facing, type, preferCrouch) {
       if (dist <= ENEMY_SIGHT_RANGE) {
         this.state = 'charge';
         if (dist <= ENEMY_MELEE_RANGE) {
-          // stateTimer doubles as attack cooldown
-          if (this.stateTimer === 0) {
+          // stateTimer doubles as attack cooldown; inDoor = immune
+          if (this.stateTimer === 0 && !player.inDoor) {
             player.takeDamage();
             this.stateTimer = 50;
           }
