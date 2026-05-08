@@ -118,27 +118,39 @@ export function drawLevel(ctx, platforms, doors) {
     const sy = p.y;
 
     if (p.y === FLOOR_Y_LOWER) {
-      // Lower floor — heavy steel plates
-      f(ctx, sx, sy, p.w, p.h, COL_FLOOR_LOWER);
-      f(ctx, sx, sy,     p.w, 1, '#dd8800'); // amber safety edge
-      f(ctx, sx, sy + 1, p.w, 1, '#994400');
-      // Plate seams every 32px
+      // Lower floor — heavy steel plates, 4-step value ramp top-to-bottom
+      f(ctx, sx, sy,     p.w, p.h, COL_FLOOR_LOWER);
+      // Safety edge — amber with dark shadow below
+      f(ctx, sx, sy,     p.w, 1, '#e89000'); // bright amber
+      f(ctx, sx, sy + 1, p.w, 1, '#a05000'); // darker amber
+      f(ctx, sx, sy + 2, p.w, 1, '#5a2800'); // deep amber shadow
+      // Plate surface highlight strip (just below safety edge)
+      f(ctx, sx, sy + 3, p.w, 1, '#3a4850');
+      // Plate seams every 32px — shadow left, highlight right
       for (let ox = 0; ox < p.w; ox += 32) {
-        f(ctx, sx + ox, sy + 2, 1, p.h - 2, '#20282e');
+        f(ctx, sx + ox,     sy + 3, 1, p.h - 3, '#18202a'); // seam shadow
+        f(ctx, sx + ox + 1, sy + 3, 1, p.h - 3, '#38424c'); // seam highlight
       }
-      // Shallow surface grooves
-      for (let oy = 7; oy < p.h; oy += 8) {
-        f(ctx, sx, sy + oy, p.w, 1, '#242c34');
+      // Surface wear grooves
+      for (let oy = 8; oy < p.h; oy += 8) {
+        f(ctx, sx, sy + oy,     p.w, 1, '#20282e'); // groove
+        f(ctx, sx, sy + oy + 1, p.w, 1, '#343e48'); // groove highlight
       }
+      // Bottom edge shadow
+      f(ctx, sx, sy + p.h - 1, p.w, 1, '#141c24');
     } else {
-      // Upper catwalk — grated steel
+      // Upper catwalk — grated steel with proper depth
       f(ctx, sx, sy, p.w, p.h, COL_FLOOR_UPPER);
-      f(ctx, sx, sy, p.w, 1, '#3a5260'); // top highlight
-      // Grating slits
-      for (let oy = 2; oy < p.h - 1; oy += 3) {
-        f(ctx, sx, sy + oy, p.w, 1, '#141e2a');
+      // Top surface highlight
+      f(ctx, sx, sy,     p.w, 1, '#3a5260'); // bright edge
+      f(ctx, sx, sy + 1, p.w, 1, '#2a3e50'); // sub-highlight
+      // Grating slits — dark void + micro highlight
+      for (let oy = 3; oy < p.h - 1; oy += 3) {
+        f(ctx, sx, sy + oy,     p.w, 1, '#0c141e'); // grating void
+        f(ctx, sx, sy + oy - 1, p.w, 1, '#304858'); // bar top highlight
       }
-      f(ctx, sx, sy + p.h - 1, p.w, 1, '#121c28'); // underside shadow
+      // Underside shadow
+      f(ctx, sx, sy + p.h - 1, p.w, 2, '#0e1820');
     }
   }
 
@@ -148,59 +160,81 @@ export function drawLevel(ctx, platforms, doors) {
     const sx = Math.round(camera.toScreenX(d.x));
     const sy = d.y;
 
-    // Frame
-    const fc = '#283c54';
-    f(ctx, sx - 2, sy - 2, 2,          DOOR_H + 4, fc);
-    f(ctx, sx + DOOR_W, sy - 2, 2,     DOOR_H + 4, fc);
-    f(ctx, sx - 2, sy - 2, DOOR_W + 4, 2,          fc);
-    f(ctx, sx - 2, sy + DOOR_H, DOOR_W + 4, 2,     fc);
-    // Rivet corners
-    const rc = '#4a6078';
-    f(ctx, sx - 2,          sy - 2,          3, 3, rc);
-    f(ctx, sx + DOOR_W - 1, sy - 2,          3, 3, rc);
-    f(ctx, sx - 2,          sy + DOOR_H - 1, 3, 3, rc);
-    f(ctx, sx + DOOR_W - 1, sy + DOOR_H - 1, 3, 3, rc);
+    // Frame — 3-step depth: outer shadow, main frame, inner highlight
+    f(ctx, sx - 2, sy - 2, 2,          DOOR_H + 4, '#1a2c3c'); // left outer
+    f(ctx, sx - 1, sy - 2, 1,          DOOR_H + 4, '#283c54'); // left inner face
+    f(ctx, sx + DOOR_W, sy - 2, 2,     DOOR_H + 4, '#1a2c3c');
+    f(ctx, sx + DOOR_W, sy - 2, 1,     DOOR_H + 4, '#344e68'); // right bright face
+    f(ctx, sx - 2, sy - 2, DOOR_W + 4, 2,          '#283c54'); // top
+    f(ctx, sx - 2, sy - 2, DOOR_W + 4, 1,          '#3a5068'); // top highlight
+    f(ctx, sx - 2, sy + DOOR_H, DOOR_W + 4, 2,     '#141e28'); // bottom shadow
+    // Rivet corners — shadow behind, bright face
+    f(ctx, sx - 2,          sy - 2,          3, 3, '#202e3c');
+    f(ctx, sx - 2,          sy - 2,          2, 2, '#4a6078'); // TL
+    f(ctx, sx + DOOR_W - 1, sy - 2,          3, 3, '#202e3c');
+    f(ctx, sx + DOOR_W,     sy - 2,          2, 2, '#4a6078'); // TR
+    f(ctx, sx - 2,          sy + DOOR_H - 1, 3, 3, '#202e3c');
+    f(ctx, sx - 2,          sy + DOOR_H,     2, 2, '#4a6078'); // BL
+    f(ctx, sx + DOOR_W - 1, sy + DOOR_H - 1, 3, 3, '#202e3c');
+    f(ctx, sx + DOOR_W,     sy + DOOR_H,     2, 2, '#4a6078'); // BR
 
     if (d.open) {
-      f(ctx, sx, sy, DOOR_W, DOOR_H, '#040608');
-      f(ctx, sx,             sy, 2, DOOR_H, '#161e28');
-      f(ctx, sx + DOOR_W - 2, sy, 2, DOOR_H, '#161e28');
+      // Open — dark void with faint inner-edge reveal
+      f(ctx, sx,              sy, DOOR_W, DOOR_H, '#030508');
+      f(ctx, sx,              sy, 2, DOOR_H, '#141c28');
+      f(ctx, sx + DOOR_W - 2, sy, 2, DOOR_H, '#0c1018');
+      f(ctx, sx,              sy, DOOR_W, 1,  '#1a2838');
 
     } else if (d.used) {
-      f(ctx, sx, sy, DOOR_W, DOOR_H, '#14202c');
-      f(ctx, sx, sy, DOOR_W, 1, '#1e2c3c');
-      // Horizontal panel ribs
+      // Used — darkened dead panel
+      f(ctx, sx, sy, DOOR_W, DOOR_H, '#0e1820');
+      f(ctx, sx, sy, DOOR_W, 1, '#162030');          // top bright edge
+      f(ctx, sx, sy, 1, DOOR_H, '#1a2838');          // left highlight
+      f(ctx, sx + DOOR_W - 1, sy, 1, DOOR_H, '#080e14'); // right shadow
+      // Raised panel ribs — shadow trough + highlight lip
       for (let dy = 6; dy < DOOR_H - 4; dy += 8) {
-        f(ctx, sx + 1, sy + dy, DOOR_W - 2, 1, '#101820');
+        f(ctx, sx + 1, sy + dy,     DOOR_W - 2, 1, '#080e18'); // shadow
+        f(ctx, sx + 1, sy + dy + 1, DOOR_W - 2, 1, '#1a2838'); // highlight
       }
-      f(ctx, sx + DOOR_W / 2 - 2, sy + 5, 4, 3, '#280a0a'); // dead indicator
+      f(ctx, sx + DOOR_W / 2 - 2, sy + 5, 4, 3, '#1a0808'); // dead indicator
+      f(ctx, sx + DOOR_W / 2 - 1, sy + 5, 2, 1, '#280c0c');
 
     } else {
-      // Closed — type-colored blast door with panel ribs
-      f(ctx, sx, sy, DOOR_W, DOOR_H, DOOR_FACE[d.type]);
+      // Closed blast door — type-colored with proper raised-panel shading
+      const fc  = DOOR_FACE[d.type];
+      f(ctx, sx, sy, DOOR_W, DOOR_H, fc);
 
-      // Horizontal panel ribs (blast-door look)
+      // Overall left-light shading: left bright edge, right dark edge
+      f(ctx, sx,              sy, 1, DOOR_H, 'rgba(255,255,255,0.18)');
+      f(ctx, sx,              sy, DOOR_W, 1, 'rgba(255,255,255,0.18)');
+      f(ctx, sx + DOOR_W - 1, sy, 1, DOOR_H, 'rgba(0,0,0,0.45)');
+      f(ctx, sx,     sy + DOOR_H - 1, DOOR_W, 1, 'rgba(0,0,0,0.45)');
+
+      // Raised horizontal panel ribs — each rib has shadow trough + highlight lip
       for (let dy = 6; dy < DOOR_H - 4; dy += 8) {
-        f(ctx, sx + 1, sy + dy, DOOR_W - 2, 1, 'rgba(0,0,0,0.35)');
+        f(ctx, sx + 2, sy + dy,     DOOR_W - 3, 1, 'rgba(0,0,0,0.50)');  // shadow
+        f(ctx, sx + 2, sy + dy + 1, DOOR_W - 3, 1, 'rgba(255,255,255,0.14)'); // highlight
       }
 
-      // Bevel edges
-      f(ctx, sx,             sy, 1, DOOR_H, 'rgba(255,255,255,0.12)');
-      f(ctx, sx,             sy, DOOR_W, 1, 'rgba(255,255,255,0.12)');
-      f(ctx, sx + DOOR_W - 1, sy, 1, DOOR_H, 'rgba(0,0,0,0.4)');
-      f(ctx, sx,             sy + DOOR_H - 1, DOOR_W, 1, 'rgba(0,0,0,0.4)');
+      // Vertical center crease
+      f(ctx, sx + DOOR_W / 2 - 1, sy + 2, 1, DOOR_H - 4, 'rgba(0,0,0,0.25)');
+      f(ctx, sx + DOOR_W / 2,     sy + 2, 1, DOOR_H - 4, 'rgba(255,255,255,0.10)');
 
-      // Status indicator light
-      const ind = d.type === 'bullet' ? '#2090ff'
-                : d.type === 'arms'   ? '#ff8020'
-                :                       '#30cc40';
+      // Status indicator light — 3-step with glow halo
+      const ind    = d.type === 'bullet' ? '#2090ff'
+                   : d.type === 'arms'   ? '#ff8020'
+                   :                       '#30cc40';
+      const indHal = d.type === 'bullet' ? '#6ab8ff'
+                   : d.type === 'arms'   ? '#ffb060'
+                   :                       '#70ee80';
+      f(ctx, sx + DOOR_W / 2 - 3, sy + 4, 6, 5, 'rgba(0,0,0,0.4)'); // recess
       f(ctx, sx + DOOR_W / 2 - 2, sy + 5, 4, 3, ind);
-      f(ctx, sx + DOOR_W / 2 - 2, sy + 5, 2, 1, 'rgba(255,255,255,0.5)');
+      f(ctx, sx + DOOR_W / 2 - 2, sy + 5, 2, 1, indHal); // glint
 
-      // Label
+      // Type label
       const label = d.type === 'bullet' ? 'B' : d.type === 'arms' ? 'A' : '';
       if (label) {
-        ctx.fillStyle = 'rgba(255,255,255,0.5)';
+        ctx.fillStyle = 'rgba(255,255,255,0.55)';
         ctx.font = '5px monospace';
         ctx.textAlign = 'center';
         ctx.fillText(label, sx + DOOR_W / 2, sy + DOOR_H - 5);
