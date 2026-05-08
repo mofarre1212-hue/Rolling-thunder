@@ -6,7 +6,7 @@ import {
 import { input } from './input.js';
 import { camera } from './camera.js';
 import { platforms, buildDoors, spawnTriggers, WORLD_W } from './level/stage1.js';
-import { drawLevel } from './level/tilemap.js';
+import { drawLevel, drawLevelFg } from './level/tilemap.js';
 import { createPlayer } from './entities/player.js';
 import { resolveCombat } from './systems/combat.js';
 import { runSpawner } from './systems/spawner.js';
@@ -160,6 +160,7 @@ function render() {
   for (const e of enemies) e.draw(ctx, camera.x);
   drawBullets();
   player.draw(ctx, camera.x);
+  drawLevelFg(ctx, platforms);   // catwalk railing in front of entities
   drawHUD(ctx, player, score, timeLeft);
 
   if (state === 'dead')  drawGameOver(ctx, score);

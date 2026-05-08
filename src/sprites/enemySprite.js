@@ -1,36 +1,39 @@
 import { ENEMY_W } from '../constants.js';
 
-// ── Grunt palette — olive battle armor, full amber visor ─────────────────────
-const G_HELM    = '#1e2e10';
-const G_HELM_D  = '#101808';
-const G_HELM_L  = '#304818';
+// ── Grunt palette — olive armored brawler, full amber visor ──────────────────
+const G_HELM    = '#1c2e10';
+const G_HELM_D  = '#0e1c08';
+const G_HELM_L  = '#2e4818';
 const G_VISOR   = '#c87800';
 const G_VISOR_L = '#ffaa20';
-const G_VISOR_D = '#885000';
-const G_ARMOR   = '#2e3e1a';
-const G_ARMOR_D = '#1a2410';
-const G_ARMOR_L = '#3e5224';
-const G_ARMOR_M = '#263018';
-const G_BELT    = '#141208';
-const G_LEGS    = '#1a1e10';
-const G_BOOT    = '#0e0e0a';
+const G_VISOR_D = '#804800';
+const G_ARMOR   = '#283018';
+const G_ARMOR_D = '#182010';
+const G_ARMOR_L = '#384820';
+const G_ARMOR_M = '#202810';
+const G_STRAP   = '#141208';
+const G_POUCH   = '#1e2410';
+const G_KNEE    = '#202c14';
+const G_BOOT    = '#0c100a';
 
-// ── Rifleman palette — dark maroon uniform, beret, exposed face ───────────────
-const R_BERET   = '#2a1010';
-const R_BERET_L = '#401818';
-const R_SKIN    = '#d4a060';
-const R_SKIN_D  = '#a07840';
-const R_EYE     = '#180800';
-const R_UNIF    = '#5a1c18';
-const R_UNIF_D  = '#380e0c';
-const R_UNIF_L  = '#7a2c28';
-const R_UNIF_M  = '#4a1614';
-const R_PANTS   = '#1e1c2e';
-const R_PANTS_D = '#141222';
+// ── Rifleman palette — dark tactical operative, balaclava ────────────────────
+const R_BALA    = '#141010';   // balaclava
+const R_BALA_L  = '#201818';
+const R_SKIN    = '#d0a058';   // face skin in opening
+const R_SKIN_D  = '#a07838';
+const R_EYE     = '#080404';
+const R_VEST    = '#202c18';   // tactical vest
+const R_VEST_L  = '#304020';
+const R_VEST_D  = '#141c10';
+const R_JACKET  = '#383028';   // uniform jacket
+const R_JACKET_D = '#282018';
+const R_JACKET_L = '#4a4038';
+const R_PANTS   = '#1c1c2c';
+const R_PANTS_D = '#121220';
 const R_BOOT    = '#141010';
-const R_GUN     = '#707070';
-const R_GUN_D   = '#404040';
-const R_GUN_L   = '#a0a0a0';
+const R_GUN     = '#686870';
+const R_GUN_D   = '#383840';
+const R_GUN_L   = '#9898a8';
 
 function r(ctx, x, y, w, h, col) {
   ctx.fillStyle = col;
@@ -46,170 +49,234 @@ function beginSprite(ctx, bx, by, facing) {
   }
 }
 
-// ── Grunt standing — 16 × 32 ─────────────────────────────────────────────────
-// charging=true extends the right arm forward for the melee-rush look
+// ── Grunt standing — 20 × 40 ─────────────────────────────────────────────────
+// charging=true gives the melee-rush lean with arms extended
 export function drawGruntStand(ctx, bx, by, facing, charging) {
   beginSprite(ctx, bx, by, facing);
 
-  // Helmet (bulky, wide)
-  r(ctx,  3, 0, 10, 1, G_HELM_L);
-  r(ctx,  2, 1, 12, 3, G_HELM);
-  r(ctx,  2, 1,  1, 3, G_HELM_D);
-  r(ctx, 13, 1,  1, 3, G_HELM_D);
+  // Helmet — wide, rounded, imposing
+  r(ctx,  3,  0, 14,  1, G_HELM_L);  // dome top highlight
+  r(ctx,  2,  1, 16,  4, G_HELM);
+  r(ctx,  2,  1,  1,  4, G_HELM_D);
+  r(ctx, 17,  1,  1,  4, G_HELM_D);
+  r(ctx,  4,  2,  4,  2, G_HELM_L);  // left dome shine
 
-  // Amber visor (large, fully enclosed — no visible face)
-  r(ctx,  3, 4,  2, 4, G_VISOR_D);
-  r(ctx,  5, 4,  6, 4, G_VISOR);
-  r(ctx, 11, 4,  2, 4, G_VISOR_D);
-  r(ctx,  5, 4,  3, 2, G_VISOR_L);
+  // Amber visor (large, full face coverage)
+  r(ctx,  3,  5,  2,  5, G_VISOR_D);  // left shadow
+  r(ctx,  5,  5,  9,  5, G_VISOR);    // main visor
+  r(ctx, 14,  5,  2,  5, G_VISOR_D);  // right shadow
+  r(ctx,  5,  5,  5,  2, G_VISOR_L);  // glint top
+  r(ctx,  6,  7,  2,  1, G_VISOR_L);  // glint secondary
 
   // Chin guard
-  r(ctx,  4, 8,  8, 2, G_HELM);
-  r(ctx,  4, 8,  1, 2, G_HELM_D);
-  r(ctx, 11, 8,  1, 2, G_HELM_D);
+  r(ctx,  4, 10, 11,  2, G_HELM);
+  r(ctx,  4, 10,  1,  2, G_HELM_D);
+  r(ctx, 14, 10,  1,  2, G_HELM_D);
 
   // Neck armor
-  r(ctx, 6, 10, 4, 2, G_ARMOR_D);
+  r(ctx,  7, 12,  6,  2, G_ARMOR_D);
 
-  // Wide shoulder plates
-  r(ctx,  0, 12, 16, 2, G_ARMOR_L);
-  r(ctx,  0, 12,  1, 2, G_ARMOR_D);
-  r(ctx, 15, 12,  1, 2, G_ARMOR_D);
+  // Wide shoulder plates — full 20px span
+  r(ctx,  0, 14, 20,  3, G_ARMOR_L);
+  r(ctx,  0, 14,  1,  3, G_ARMOR_D);
+  r(ctx, 19, 14,  1,  3, G_ARMOR_D);
+  r(ctx,  0, 16, 20,  1, G_ARMOR_M);  // shoulder bottom crease
 
-  // Body armor — 3-tone shading
-  r(ctx,  2, 14, 12,  9, G_ARMOR);
-  r(ctx,  2, 14,  2,  9, G_ARMOR_D);
-  r(ctx, 12, 14,  2,  9, G_ARMOR_D);
-  r(ctx,  5, 14,  6,  4, G_ARMOR_L);
-  r(ctx,  4, 18,  2,  5, G_ARMOR_M);
-  r(ctx, 10, 18,  2,  5, G_ARMOR_M);
+  // Body armor (tactical vest)
+  r(ctx,  2, 17, 16, 10, G_ARMOR);
+  r(ctx,  2, 17,  2, 10, G_ARMOR_D);
+  r(ctx, 16, 17,  2, 10, G_ARMOR_D);
+  r(ctx,  5, 17, 10,  4, G_ARMOR_L);  // chest plate highlight
+  r(ctx,  4, 21,  3,  6, G_ARMOR_M);
+  r(ctx, 13, 21,  3,  6, G_ARMOR_M);
 
-  // Waist armor
-  r(ctx, 3, 23, 10, 2, G_BELT);
+  // Tactical straps + ammo pouches
+  r(ctx,  6, 18,  2,  5, G_STRAP);   // left shoulder strap
+  r(ctx, 12, 18,  2,  5, G_STRAP);   // right shoulder strap
+  r(ctx,  4, 21,  4,  4, G_POUCH);   // left chest pouch
+  r(ctx, 12, 21,  4,  4, G_POUCH);   // right chest pouch
+  r(ctx,  5, 22,  2,  2, G_ARMOR_L); // pouch clasp detail
+  r(ctx, 13, 22,  2,  2, G_ARMOR_L);
+
+  // Waist
+  r(ctx,  3, 27, 14,  2, G_STRAP);
 
   // Leg armor
-  r(ctx,  3, 25, 5, 5, G_LEGS);
-  r(ctx,  3, 25, 1, 5, G_ARMOR_D);
-  r(ctx,  9, 25, 5, 5, G_LEGS);
-  r(ctx, 13, 25, 1, 5, G_ARMOR_D);
+  r(ctx,  3, 29,  7,  8, G_ARMOR);
+  r(ctx,  3, 29,  1,  8, G_ARMOR_D);
+  r(ctx,  9, 29,  1,  8, G_ARMOR_M);  // inner-leg crease
+  r(ctx, 10, 29,  7,  8, G_ARMOR);
+  r(ctx, 16, 29,  1,  8, G_ARMOR_D);
 
-  // Boots
-  r(ctx, 2, 30, 6, 2, G_BOOT);
-  r(ctx, 9, 30, 6, 2, G_BOOT);
+  // Knee pads
+  r(ctx,  4, 32,  5,  3, G_KNEE);
+  r(ctx, 11, 32,  5,  3, G_KNEE);
+  r(ctx,  5, 32,  3,  1, G_ARMOR_L); // knee pad highlight
 
-  // Right arm
+  // Heavy boots
+  r(ctx,  2, 37,  8,  3, G_BOOT);
+  r(ctx,  2, 37,  1,  3, G_ARMOR_D);
+  r(ctx,  2, 39,  9,  1, G_ARMOR_M); // boot sole
+  r(ctx, 10, 37,  8,  3, G_BOOT);
+  r(ctx, 17, 37,  1,  3, G_ARMOR_D);
+  r(ctx, 10, 39,  9,  1, G_ARMOR_M);
+
+  // Arms
   if (charging) {
-    r(ctx, 14, 14, 6, 4, G_ARMOR);
-    r(ctx, 14, 14, 1, 4, G_ARMOR_D);
-    r(ctx, 19, 15, 2, 3, G_ARMOR_M);
+    // Right arm thrust forward, leaning into strike
+    r(ctx, 17, 16,  5,  5, G_ARMOR);
+    r(ctx, 17, 16,  1,  5, G_ARMOR_D);
+    r(ctx, 21, 18,  3,  4, G_ARMOR_M); // gauntlet
+    r(ctx, 22, 19,  2,  2, G_ARMOR_L); // gauntlet glint
   } else {
-    r(ctx, 14, 16, 3, 7, G_ARMOR);
-    r(ctx, 14, 16, 1, 7, G_ARMOR_D);
+    // Right arm at side
+    r(ctx, 17, 18,  3,  8, G_ARMOR);
+    r(ctx, 17, 18,  1,  8, G_ARMOR_D);
+    r(ctx, 17, 25,  4,  3, G_ARMOR_M); // glove
   }
 
   ctx.restore();
 }
 
-// ── Rifleman standing — 16 × 32 ──────────────────────────────────────────────
+// ── Rifleman standing — 20 × 40 ──────────────────────────────────────────────
 export function drawRiflemanStand(ctx, bx, by, facing) {
   beginSprite(ctx, bx, by, facing);
 
-  // Beret
-  r(ctx,  3, 0, 10, 1, R_BERET_L);
-  r(ctx,  2, 1, 12, 3, R_BERET);
-  r(ctx,  2, 1,  1, 3, '#1a0808');
+  // Balaclava
+  r(ctx,  4,  0, 12,  1, R_BALA_L);
+  r(ctx,  3,  1, 14,  4, R_BALA);
+  r(ctx,  3,  1,  1,  4, '#0c0808');
+  r(ctx, 16,  1,  1,  4, '#0c0808');
+  r(ctx,  4,  1,  3,  2, R_BALA_L);  // dome shine
 
-  // Face
-  r(ctx, 4, 4, 8, 1, R_SKIN);
-  r(ctx, 3, 5, 10, 4, R_SKIN);
-  r(ctx, 5, 6, 2, 1, R_EYE);
-  r(ctx, 9, 6, 2, 1, R_EYE);
-  r(ctx, 4, 8, 3, 1, R_SKIN_D);
-  r(ctx, 9, 8, 3, 1, R_SKIN_D);
+  // Face opening (eyes + skin visible through balaclava)
+  r(ctx,  5,  5, 10,  5, R_SKIN);    // exposed face
+  r(ctx,  5,  5,  1,  3, R_SKIN_D);  // cheek shadow
+  r(ctx, 14,  5,  1,  3, R_SKIN_D);
+  r(ctx,  6,  6,  3,  2, R_EYE);     // left eye
+  r(ctx, 11,  6,  3,  2, R_EYE);     // right eye
+  r(ctx,  7,  6,  1,  1, '#c0a880'); // eye glint L
+  r(ctx, 12,  6,  1,  1, '#c0a880'); // eye glint R
+  r(ctx,  6,  9,  3,  1, R_SKIN_D);  // mouth shadow
+  r(ctx,  9,  9,  2,  1, '#c89060'); // teeth/mouth
+  r(ctx, 11,  9,  3,  1, R_SKIN_D);
+
+  // Balaclava around face
+  r(ctx,  3,  5,  2,  5, R_BALA);   // left cheek cover
+  r(ctx, 15,  5,  2,  5, R_BALA);   // right cheek cover
+  r(ctx,  4, 10, 12,  2, R_BALA);   // chin/jaw cover
 
   // Neck
-  r(ctx, 7, 9, 2, 2, R_SKIN);
+  r(ctx,  8, 12,  4,  2, R_BALA);
 
-  // Collar flash
-  r(ctx, 5, 11, 6, 1, R_UNIF_L);
+  // Tactical vest (over jacket)
+  r(ctx,  2, 14, 16,  2, R_VEST_L); // vest shoulder top
+  r(ctx,  2, 14,  1,  2, R_VEST_D);
+  r(ctx, 17, 14,  1,  2, R_VEST_D);
+  r(ctx,  3, 16, 14, 11, R_VEST);
+  r(ctx,  3, 16,  2, 11, R_VEST_D);
+  r(ctx, 15, 16,  2, 11, R_VEST_D);
+  r(ctx,  6, 16,  8,  3, R_VEST_L); // chest highlight
 
-  // Uniform body — 3-tone shading
-  r(ctx,  2, 12, 12, 11, R_UNIF);
-  r(ctx,  2, 12,  2, 11, R_UNIF_D);
-  r(ctx, 12, 12,  2, 11, R_UNIF_D);
-  r(ctx,  5, 12,  6,  4, R_UNIF_L);
-  r(ctx,  4, 16,  2,  7, R_UNIF_M);
-  r(ctx, 10, 16,  2,  7, R_UNIF_M);
+  // Jacket sleeves (visible beside vest)
+  r(ctx,  1, 16,  2, 11, R_JACKET_L); // left sleeve
+  r(ctx, 17, 16,  2, 11, R_JACKET_L); // right sleeve
+
+  // Vest pockets/detail
+  r(ctx,  5, 20,  4,  4, R_VEST_D); // left pocket
+  r(ctx, 11, 20,  4,  4, R_VEST_D); // right pocket
+  r(ctx,  6, 21,  2,  2, R_VEST_L); // pocket buckle
 
   // Belt
-  r(ctx, 3, 23, 10, 2, R_BOOT);
+  r(ctx,  3, 27, 14,  2, '#181808');
+  r(ctx,  8, 27,  4,  2, '#302808');  // buckle
 
   // Pants
-  r(ctx,  3, 25, 5, 5, R_PANTS);
-  r(ctx,  3, 25, 1, 5, R_PANTS_D);
-  r(ctx,  9, 25, 5, 5, R_PANTS);
-  r(ctx, 13, 25, 1, 5, R_PANTS_D);
+  r(ctx,  3, 29,  6,  9, R_PANTS);
+  r(ctx,  3, 29,  1,  9, R_PANTS_D);
+  r(ctx,  8, 29,  1,  9, R_PANTS_D);  // inner-leg shadow
+  r(ctx, 10, 29,  6,  9, R_PANTS);
+  r(ctx, 15, 29,  1,  9, R_PANTS_D);
 
   // Boots
-  r(ctx, 2, 30, 6, 2, R_BOOT);
-  r(ctx, 9, 30, 6, 2, R_BOOT);
+  r(ctx,  2, 38,  8,  2, R_BOOT);
+  r(ctx,  2, 38,  1,  2, '#0a0808');
+  r(ctx,  2, 39,  8,  1, '#0a0808'); // sole
+  r(ctx, 10, 38,  8,  2, R_BOOT);
+  r(ctx, 17, 38,  1,  2, '#0a0808');
+  r(ctx, 10, 39,  8,  1, '#0a0808');
 
   // Gun arm + weapon
-  r(ctx, 14, 15, 3, 5, R_UNIF);
-  r(ctx, 14, 15, 1, 5, R_UNIF_D);
-  r(ctx, 17, 15, 3, 1, R_GUN_L);
-  r(ctx, 17, 16, 5, 2, R_GUN);
-  r(ctx, 17, 17, 3, 1, R_GUN_D);
+  r(ctx, 17, 17,  3,  8, R_JACKET_L); // right sleeve
+  r(ctx, 17, 17,  1,  8, R_JACKET_D);
+  r(ctx, 20, 17,  3,  1, R_GUN_L);    // receiver top
+  r(ctx, 20, 18,  7,  2, R_GUN);      // barrel
+  r(ctx, 21, 19,  5,  1, R_GUN_D);    // barrel underside
+  r(ctx, 24, 20,  2,  1, R_GUN_D);    // muzzle shadow
 
   ctx.restore();
 }
 
-// ── Rifleman crouching — 16 × 20 ─────────────────────────────────────────────
+// ── Rifleman crouching — 20 × 26 ─────────────────────────────────────────────
 export function drawRiflemanCrouch(ctx, bx, by, facing) {
   beginSprite(ctx, bx, by, facing);
 
-  // Beret
-  r(ctx, 2, 0, 10, 1, R_BERET_L);
-  r(ctx, 1, 1, 12, 2, R_BERET);
+  // Balaclava (head bowed forward)
+  r(ctx,  3,  0, 13,  1, R_BALA_L);
+  r(ctx,  2,  1, 14,  3, R_BALA);
+  r(ctx,  3,  1,  3,  2, R_BALA_L);  // dome shine
 
-  // Face (tilted forward)
-  r(ctx, 3, 3, 8, 3, R_SKIN);
-  r(ctx, 4, 4, 2, 1, R_EYE);
-  r(ctx, 7, 4, 2, 1, R_EYE);
-  r(ctx, 4, 5, 2, 1, R_SKIN_D);
+  // Face (angled down)
+  r(ctx,  4,  4, 10,  3, R_SKIN);
+  r(ctx,  4,  4,  1,  2, R_SKIN_D);
+  r(ctx, 13,  4,  1,  2, R_SKIN_D);
+  r(ctx,  5,  5,  3,  1, R_EYE);
+  r(ctx,  9,  5,  3,  1, R_EYE);
+  r(ctx,  6,  5,  1,  1, '#c0a880');
+  r(ctx, 10,  5,  1,  1, '#c0a880');
 
-  // Uniform (hunched — wider silhouette)
-  r(ctx,  1,  6, 13, 7, R_UNIF);
-  r(ctx,  1,  6,  2, 7, R_UNIF_D);
-  r(ctx, 12,  6,  2, 7, R_UNIF_D);
-  r(ctx,  4,  7,  6, 3, R_UNIF_L);
-  r(ctx,  3, 10,  2, 3, R_UNIF_M);
-  r(ctx, 11, 10,  2, 3, R_UNIF_M);
+  // Balaclava frame
+  r(ctx,  2,  4,  2,  3, R_BALA);
+  r(ctx, 14,  4,  2,  3, R_BALA);
+  r(ctx,  3,  7, 12,  2, R_BALA);
+
+  // Hunched vest
+  r(ctx,  1,  9, 17,  3, R_VEST_L);  // shoulder hump
+  r(ctx,  1,  9,  2,  3, R_VEST_D);
+  r(ctx, 16,  9,  2,  3, R_VEST_D);
+  r(ctx,  2, 12, 14,  6, R_VEST);
+  r(ctx,  2, 12,  2,  6, R_VEST_D);
+  r(ctx, 14, 12,  2,  6, R_VEST_D);
+  r(ctx,  5, 12,  8,  3, R_VEST_L);
+  r(ctx,  1, 12,  1,  6, R_JACKET_L); // left sleeve
+  r(ctx, 17, 12,  1,  6, R_JACKET_L); // right sleeve
 
   // Belt
-  r(ctx, 2, 13, 10, 1, R_BOOT);
+  r(ctx, 2, 18, 14, 1, '#181808');
 
-  // Pants (bent knee)
-  r(ctx,  2, 14, 5, 5, R_PANTS);
-  r(ctx,  2, 14, 1, 5, R_PANTS_D);
-  r(ctx,  9, 14, 5, 5, R_PANTS);
-  r(ctx, 13, 14, 1, 5, R_PANTS_D);
+  // Pants
+  r(ctx,  2, 19,  6,  6, R_PANTS);
+  r(ctx,  2, 19,  1,  6, R_PANTS_D);
+  r(ctx, 11, 19,  6,  6, R_PANTS);
+  r(ctx, 16, 19,  1,  6, R_PANTS_D);
 
-  // Boots
-  r(ctx, 1, 19, 6, 1, R_BOOT);
-  r(ctx, 9, 19, 6, 1, R_BOOT);
+  // Boots (flat)
+  r(ctx,  1, 24,  7,  2, R_BOOT);
+  r(ctx,  1, 25,  8,  1, '#0a0808');
+  r(ctx, 10, 24,  7,  2, R_BOOT);
+  r(ctx,  9, 25,  8,  1, '#0a0808');
 
-  // Gun arm (lowered for crouch shot)
-  r(ctx, 13,  8, 3, 4, R_UNIF);
-  r(ctx, 13,  8, 1, 4, R_UNIF_D);
-  r(ctx, 16,  8, 3, 1, R_GUN_L);
-  r(ctx, 16,  9, 5, 2, R_GUN);
-  r(ctx, 16, 10, 3, 1, R_GUN_D);
+  // Gun arm (lowered, aimed flat)
+  r(ctx, 16, 12,  3,  5, R_JACKET_L);
+  r(ctx, 16, 12,  1,  5, R_JACKET_D);
+  r(ctx, 19, 12,  3,  1, R_GUN_L);
+  r(ctx, 19, 13,  6,  2, R_GUN);
+  r(ctx, 19, 14,  5,  1, R_GUN_D);
 
   ctx.restore();
 }
 
-// ── Fallen enemy heap — entity top is by, bottom is by + ENEMY_H ─────────────
+// ── Fallen heap — entity top is by; entity height is ENEMY_H (40) ─────────────
 export function drawEnemyDead(ctx, bx, by, type) {
   const x = Math.round(bx);
   const y = Math.round(by);
@@ -218,21 +285,33 @@ export function drawEnemyDead(ctx, bx, by, type) {
     ctx.fillRect(x + ox, y + oy, w, h);
   }
   if (type === 'grunt') {
-    rf( 3, 16,  8, 4, G_HELM);
-    rf( 4, 18,  6, 2, G_VISOR);
-    rf( 0, 20, 16, 8, G_ARMOR);
-    rf( 0, 20,  2, 8, G_ARMOR_D);
-    rf(14, 20,  2, 8, G_ARMOR_D);
-    rf( 0, 28,  7, 4, G_BOOT);
-    rf( 9, 28,  7, 4, G_BOOT);
+    // Helmet rolls to side — visor visible
+    rf( 3, 20,  9,  5, G_HELM);
+    rf( 5, 22,  7,  3, G_VISOR);
+    rf( 5, 22,  4,  1, G_VISOR_L);   // visor glint
+    // Armor heap spread across lower half
+    rf( 0, 25, 20,  9, G_ARMOR);
+    rf( 0, 25,  2,  9, G_ARMOR_D);
+    rf(18, 25,  2,  9, G_ARMOR_D);
+    rf( 3, 26, 14,  3, G_ARMOR_L);   // chest plate visible
+    // Boots sprawled
+    rf( 0, 34,  8,  6, G_BOOT);
+    rf(12, 34,  8,  6, G_BOOT);
+    rf( 0, 39, 20,  1, G_ARMOR_M);   // ground shadow
   } else {
-    rf( 3, 16,  8, 3, R_BERET);
-    rf( 5, 17,  5, 2, R_SKIN);
-    rf( 0, 19, 16, 8, R_UNIF);
-    rf( 0, 19,  2, 8, R_UNIF_D);
-    rf(14, 19,  2, 8, R_UNIF_D);
-    rf( 1, 27, 14, 3, R_PANTS);
-    rf( 0, 29,  6, 3, R_BOOT);
-    rf(10, 29,  6, 3, R_BOOT);
+    // Balaclava face-down
+    rf( 3, 20, 10,  4, R_BALA);
+    rf( 5, 22,  5,  2, R_SKIN);
+    // Vest/jacket spread
+    rf( 0, 24, 20,  9, R_VEST);
+    rf( 0, 24,  2,  9, R_VEST_D);
+    rf(18, 24,  2,  9, R_VEST_D);
+    rf( 3, 25, 14,  3, R_VEST_L);    // chest visible
+    // Pants
+    rf( 1, 33, 18,  5, R_PANTS);
+    // Boots
+    rf( 0, 37,  7,  3, R_BOOT);
+    rf(13, 37,  7,  3, R_BOOT);
+    rf( 0, 39, 20,  1, '#0a0808');   // ground shadow
   }
 }
