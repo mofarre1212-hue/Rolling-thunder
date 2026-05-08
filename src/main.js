@@ -70,7 +70,12 @@ function update() {
     return;
   }
 
-  if (state === 'dead' || state === 'clear') {
+  if (state === 'dead') {
+    if (input.pressed('KeyZ')) initGame();
+    return;
+  }
+
+  if (state === 'clear') {
     if (input.pressed('KeyZ')) state = 'title';
     return;
   }

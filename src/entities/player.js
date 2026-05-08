@@ -107,8 +107,6 @@ export function createPlayer() {
     },
 
     _handleShooting(bullets) {
-      if (!this.onGround) return; // no shooting in mid-air
-
       const shootHeld    = input.held('KeyX');
       const shootPressed = input.pressed('KeyX');
 
