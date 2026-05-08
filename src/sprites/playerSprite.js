@@ -1,28 +1,30 @@
 import { PLAYER_W } from '../constants.js';
 
-// Palette — Rolling Thunder protagonist style
-const HAIR     = '#2a1a08';
-const SKIN     = '#d4a870';
-const SKIN_D   = '#b08050';
-const EYE      = '#160800';
-const SHIRT    = '#e8e8d8'; // white undershirt visible at collar
-const JACKET   = '#cc2020'; // bright red jacket
-const JACKET_D = '#8a1010'; // jacket shadow
-const JACKET_L = '#e03838'; // jacket highlight
-const PANTS    = '#585868'; // gray slacks
-const PANTS_D  = '#383848';
-const BELT     = '#1a1008';
-const SHOES    = '#cc2020'; // red shoes, matching jacket
-const GUN      = '#787878';
-const GUN_D    = '#444448';
+// ── Palette ───────────────────────────────────────────────────────────────────
+const HAIR     = '#150a04';
+const SKIN     = '#e8b878';
+const SKIN_D   = '#b88040';
+const EYE      = '#0c0800';
+const SHIRT    = '#f0f0e0';
+const JACKET   = '#cc1a1a';
+const JACKET_D = '#880e0e';
+const JACKET_L = '#ee4444';
+const JACKET_M = '#aa1616';
+const PANTS    = '#606272';
+const PANTS_D  = '#3e4054';
+const BELT     = '#1c1008';
+const BKL      = '#c89018';
+const SHOES    = '#cc1a1a';
+const SHOES_D  = '#881010';
+const GUN      = '#909090';
+const GUN_D    = '#505050';
+const GUN_L    = '#c0c0c0';
 
 function r(ctx, x, y, w, h, col) {
   ctx.fillStyle = col;
   ctx.fillRect(x, y, w, h);
 }
 
-// Sets up transform so art is always drawn facing right;
-// scale(-1,1) handles the mirror for left-facing.
 function beginSprite(ctx, bx, by, facing) {
   ctx.save();
   ctx.translate(Math.round(bx), Math.round(by));
@@ -32,96 +34,112 @@ function beginSprite(ctx, bx, by, facing) {
   }
 }
 
-// Standing pose — 12 × 24
+// Standing pose — 16 × 32
 export function drawPlayerStand(ctx, bx, by, facing, frame) {
   beginSprite(ctx, bx, by, facing);
 
-  // Hair (short, dark — no hat)
-  r(ctx, 2, 0, 7, 2, HAIR);
-  r(ctx, 1, 2, 8, 1, HAIR);
+  // ── Hair ──────────────────────────────────────────────────────────────────
+  r(ctx, 4, 0, 8, 1, HAIR);
+  r(ctx, 3, 1, 10, 2, HAIR);
 
-  // Face
-  r(ctx, 3, 3, 6, 1, SKIN);     // forehead
-  r(ctx, 2, 4, 8, 3, SKIN);     // main face
-  r(ctx, 4, 5, 1, 1, EYE);
-  r(ctx, 7, 5, 1, 1, EYE);
-  r(ctx, 3, 6, 1, 1, SKIN_D);   // cheek shadow
-  r(ctx, 4, 7, 4, 1, SKIN_D);   // chin
+  // ── Face ──────────────────────────────────────────────────────────────────
+  r(ctx, 4, 3, 8, 1, SKIN);
+  r(ctx, 3, 4, 10, 4, SKIN);
+  r(ctx, 5, 5, 2, 1, EYE);
+  r(ctx, 9, 5, 2, 1, EYE);
+  r(ctx, 4, 7, 3, 1, SKIN_D);
+  r(ctx, 9, 7, 3, 1, SKIN_D);
 
-  // Neck
-  r(ctx, 5, 7, 2, 1, SKIN);
+  // ── Neck ──────────────────────────────────────────────────────────────────
+  r(ctx, 7, 8, 2, 2, SKIN);
 
-  // White shirt collar (visible at jacket opening)
-  r(ctx, 4, 8, 4, 2, SHIRT);
+  // ── White collar ──────────────────────────────────────────────────────────
+  r(ctx, 5, 10, 6, 1, SHIRT);
+  r(ctx, 4, 11, 8, 1, SHIRT);
 
-  // Red jacket body
-  r(ctx, 1, 9, 9, 8, JACKET);
-  r(ctx, 1, 9, 1, 8, JACKET_D); // left edge shadow
-  r(ctx, 9, 9, 1, 8, JACKET_D); // right edge shadow
-  r(ctx, 3, 9, 5, 2, JACKET_L); // chest highlight
+  // ── Red jacket — 3-tone shading ───────────────────────────────────────────
+  r(ctx,  2, 12, 12, 11, JACKET);
+  r(ctx,  2, 12,  2, 11, JACKET_D);
+  r(ctx, 12, 12,  2, 11, JACKET_D);
+  r(ctx,  5, 12,  6,  4, JACKET_L);
+  r(ctx,  4, 16,  2,  7, JACKET_M);
+  r(ctx, 10, 16,  2,  7, JACKET_M);
 
-  // Belt
-  r(ctx, 2, 17, 8, 1, BELT);
+  // ── Belt + buckle ─────────────────────────────────────────────────────────
+  r(ctx, 3, 23, 10, 1, BELT);
+  r(ctx, 3, 24,  2,  1, BELT);
+  r(ctx, 11,24,  2,  1, BELT);
+  r(ctx, 6, 23,  4,  2, BKL);
 
-  // Gray slacks — walk cycle: legs alternate 1px up/down
-  const lyL = frame === 0 ? 18 : 19;
-  const lyR = frame === 0 ? 19 : 18;
-  const lhL = frame === 0 ?  5 :  4;
-  const lhR = frame === 0 ?  4 :  5;
-  r(ctx,  2, lyL, 4, lhL, PANTS);
-  r(ctx,  2, lyL, 1, lhL, PANTS_D); // inner-leg shadow
-  r(ctx,  7, lyR, 4, lhR, PANTS);
-  r(ctx, 10, lyR, 1, lhR, PANTS_D);
+  // ── Pants — 2-frame walk cycle ────────────────────────────────────────────
+  const lyL = frame === 0 ? 25 : 26;
+  const lyR = frame === 0 ? 26 : 25;
+  r(ctx,  3, lyL, 5, 5, PANTS);
+  r(ctx,  3, lyL, 1, 5, PANTS_D);
+  r(ctx,  9, lyR, 5, 5, PANTS);
+  r(ctx, 13, lyR, 1, 5, PANTS_D);
 
-  // Red shoes
-  r(ctx, 1, 23, 5, 1, SHOES);
-  r(ctx, 7, 23, 4, 1, SHOES);
+  // ── Shoes ─────────────────────────────────────────────────────────────────
+  r(ctx,  2, 30, 7, 2, SHOES);
+  r(ctx,  2, 31, 1, 1, SHOES_D);
+  r(ctx,  9, 30, 6, 2, SHOES);
+  r(ctx, 14, 31, 1, 1, SHOES_D);
 
-  // Gun arm (extends right — mirrored for left-facing)
-  r(ctx, 10, 12, 2, 3, JACKET);  // sleeve
-  r(ctx, 12, 13, 3, 1, GUN);    // barrel
-  r(ctx, 12, 14, 2, 1, GUN_D);  // barrel underside
+  // ── Gun arm + weapon (extends right beyond sprite width) ──────────────────
+  r(ctx, 14, 15,  3, 4, JACKET);
+  r(ctx, 14, 15,  1, 4, JACKET_D);
+  r(ctx, 17, 15,  3, 1, GUN_L);
+  r(ctx, 17, 16,  5, 2, GUN);
+  r(ctx, 17, 17,  3, 1, GUN_D);
 
   ctx.restore();
 }
 
-// Crouching pose — 12 × 14
+// Crouching pose — 16 × 20
 export function drawPlayerCrouch(ctx, bx, by, facing) {
   beginSprite(ctx, bx, by, facing);
 
-  // Hair
-  r(ctx, 2, 0, 7, 1, HAIR);
-  r(ctx, 1, 1, 9, 1, HAIR);
+  // ── Hair (head bowed forward) ─────────────────────────────────────────────
+  r(ctx, 3, 0, 9, 1, HAIR);
+  r(ctx, 2, 1, 11, 2, HAIR);
 
-  // Face (head tilted forward)
-  r(ctx, 2, 2, 7, 3, SKIN);
-  r(ctx, 4, 3, 1, 1, EYE);
-  r(ctx, 6, 3, 1, 1, EYE);
-  r(ctx, 3, 4, 1, 1, SKIN_D);   // cheek shadow
+  // ── Face (angled down) ────────────────────────────────────────────────────
+  r(ctx, 3, 3, 9, 3, SKIN);
+  r(ctx, 4, 4, 2, 1, EYE);
+  r(ctx, 8, 4, 2, 1, EYE);
+  r(ctx, 4, 5, 2, 1, SKIN_D);
 
-  // Red jacket (hunched — wider, shorter)
-  r(ctx, 1, 5, 10, 6, JACKET);
-  r(ctx, 1, 5, 1,  6, JACKET_D); // left shadow
-  r(ctx, 3, 5, 5,  2, JACKET_L); // chest highlight
-  r(ctx, 9, 5, 2,  6, JACKET_D); // right shadow
+  // ── Collar ────────────────────────────────────────────────────────────────
+  r(ctx, 5, 6, 4, 1, SHIRT);
 
-  // White collar on top of jacket
-  r(ctx, 4, 5, 3, 1, SHIRT);
+  // ── Jacket (hunched — wider, compressed) ──────────────────────────────────
+  r(ctx,  1,  6, 13, 8, JACKET);
+  r(ctx,  1,  6,  2, 8, JACKET_D);
+  r(ctx, 12,  6,  2, 8, JACKET_D);
+  r(ctx,  4,  7,  6, 3, JACKET_L);
+  r(ctx,  3, 10,  2, 4, JACKET_M);
+  r(ctx, 11, 10,  2, 4, JACKET_M);
 
-  // Gray pants (bent at knee)
-  r(ctx,  1, 11, 4, 2, PANTS);
-  r(ctx,  1, 11, 1, 2, PANTS_D);
-  r(ctx,  7, 11, 4, 2, PANTS);
-  r(ctx, 10, 11, 1, 2, PANTS_D);
+  // ── Belt + buckle ─────────────────────────────────────────────────────────
+  r(ctx, 2, 14, 10, 1, BELT);
+  r(ctx, 6, 14,  3, 1, BKL);
 
-  // Red shoes (wider, flat on ground)
-  r(ctx,  0, 13, 5, 1, SHOES);
-  r(ctx,  6, 13, 5, 1, SHOES);
+  // ── Pants (bent knee) ─────────────────────────────────────────────────────
+  r(ctx,  2, 15, 5, 4, PANTS);
+  r(ctx,  2, 15, 1, 4, PANTS_D);
+  r(ctx,  9, 15, 5, 4, PANTS);
+  r(ctx, 13, 15, 1, 4, PANTS_D);
 
-  // Gun arm (lowered, forward — crouch-shoot stance)
-  r(ctx,  9, 7, 2, 3, JACKET);
-  r(ctx, 11, 8, 3, 1, GUN);
-  r(ctx, 11, 9, 2, 1, GUN_D);
+  // ── Shoes (flat, wide) ────────────────────────────────────────────────────
+  r(ctx, 1, 19, 6, 1, SHOES);
+  r(ctx, 9, 19, 6, 1, SHOES);
+
+  // ── Gun arm (lowered into crouch-shoot stance) ────────────────────────────
+  r(ctx, 13,  8, 3, 4, JACKET);
+  r(ctx, 13,  8, 1, 4, JACKET_D);
+  r(ctx, 16,  8, 3, 1, GUN_L);
+  r(ctx, 16,  9, 5, 2, GUN);
+  r(ctx, 16, 10, 3, 1, GUN_D);
 
   ctx.restore();
 }
