@@ -75,21 +75,21 @@ export const STAGE_TIME_SECONDS = 90;
 // HUD
 export const HUD_H = 20;
 
-// Colors (placeholder art palette)
-export const COL_BG           = '#282830';
-export const COL_FLOOR_LOWER  = '#009898'; // teal arcade floor
-export const COL_FLOOR_UPPER  = '#007878'; // slightly darker teal for upper ledge
-export const COL_WALL         = '#50505c'; // medium gray industrial wall
+// Colors
+export const COL_BG           = '#0e1520'; // dark navy industrial
+export const COL_FLOOR_LOWER  = '#38424e'; // steel plate floor
+export const COL_FLOOR_UPPER  = '#2a3848'; // catwalk steel
+export const COL_WALL         = '#1a2838'; // steel blue upper wall
 export const COL_PLAYER       = '#c8a050';
 export const COL_PLAYER_HURT  = '#ff4444';
 export const COL_ENEMY        = '#8b3a3a';
 export const COL_ENEMY_ALERT  = '#cc5533';
 export const COL_BULLET_PLAYER= '#ffff88';
 export const COL_BULLET_ENEMY = '#ff6644';
-export const COL_DOOR_BULLET  = '#4488ff';
-export const COL_DOOR_ARMS    = '#ff8800';
-export const COL_DOOR_NORMAL  = '#554433';
-export const COL_HUD_BG       = '#0a0a0a';
-export const COL_HUD_TEXT     = '#e8e8c0';
-export const COL_HP_FULL      = '#44ff44';
-export const COL_HP_EMPTY     = '#333';
+export const COL_DOOR_BULLET  = '#1a3c78'; // deep blue ammo door
+export const COL_DOOR_ARMS    = '#7a3010'; // rust-orange arms door
+export const COL_DOOR_NORMAL  = '#2a3848'; // dark steel door
+export const COL_HUD_BG       = '#080c14';
+export const COL_HUD_TEXT     = '#c8d4e0';
+export const COL_HP_FULL      = '#cc2020'; // red alert HP pips
+export const COL_HP_EMPTY     = '#2a1414';
