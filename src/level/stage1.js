@@ -3,17 +3,11 @@ import {
   CANVAS_H, DOOR_W, DOOR_H
 } from '../constants.js';
 
-// World width for stage 1
 export const WORLD_W = 1536;
 
-// Platforms: { x, y, w, h }
-// Lower floor runs the full width at FLOOR_Y_LOWER.
-// Upper ledge sections are placed on top of the lower floor.
+// Platforms
 export const platforms = [
-  // Lower floor — full stage
   { x: 0,    y: FLOOR_Y_LOWER, w: WORLD_W, h: CANVAS_H - FLOOR_Y_LOWER },
-
-  // Upper ledge sections
   { x: 160,  y: FLOOR_Y_UPPER, w: 128, h: LEDGE_THICKNESS },
   { x: 400,  y: FLOOR_Y_UPPER, w: 160, h: LEDGE_THICKNESS },
   { x: 672,  y: FLOOR_Y_UPPER, w: 128, h: LEDGE_THICKNESS },
@@ -21,9 +15,6 @@ export const platforms = [
   { x: 1200, y: FLOOR_Y_UPPER, w: 160, h: LEDGE_THICKNESS },
 ];
 
-// Doors: { x, y, floor ('lower'|'upper'), type ('normal'|'bullet'|'arms'), used }
-// Placed flush against the back wall (left edge of door rect = x)
-// Door bottom aligns with the floor surface it sits on.
 export function buildDoors() {
   return [
     { x: 80,   y: FLOOR_Y_LOWER - DOOR_H, floor: 'lower', type: 'normal', used: false, open: false },
@@ -41,18 +32,31 @@ export function buildDoors() {
   ];
 }
 
-// Spawn triggers: { x, spawns: [{floorY, facing, crouch}] }
-// Enemies emerge when camera crosses trigger x.
+// Spawn triggers — x must be > CANVAS_W (384) so none fire at game start.
+// Trigger fires when the camera's right edge reaches trigger.x.
+// Enemies spawn ahead of the player (to the right) and walk left.
 export const spawnTriggers = [
-  { x: 200,  fired: false, spawns: [{ x: 320,  floorY: FLOOR_Y_LOWER, facing: -1, crouch: false }] },
-  { x: 380,  fired: false, spawns: [{ x: 500,  floorY: FLOOR_Y_LOWER, facing: -1, crouch: false },
-                                     { x: 520,  floorY: FLOOR_Y_UPPER, facing: -1, crouch: true  }] },
-  { x: 580,  fired: false, spawns: [{ x: 700,  floorY: FLOOR_Y_LOWER, facing: -1, crouch: false },
-                                     { x: 680,  floorY: FLOOR_Y_LOWER, facing: -1, crouch: false }] },
-  { x: 780,  fired: false, spawns: [{ x: 900,  floorY: FLOOR_Y_UPPER, facing: -1, crouch: false }] },
-  { x: 960,  fired: false, spawns: [{ x: 1080, floorY: FLOOR_Y_LOWER, facing: -1, crouch: false },
-                                     { x: 1100, floorY: FLOOR_Y_LOWER, facing: -1, crouch: true  },
-                                     { x: 1060, floorY: FLOOR_Y_UPPER, facing: -1, crouch: false }] },
-  { x: 1200, fired: false, spawns: [{ x: 1350, floorY: FLOOR_Y_LOWER, facing: -1, crouch: false },
-                                     { x: 1380, floorY: FLOOR_Y_UPPER, facing: -1, crouch: false }] },
+  { x: 440,  fired: false, spawns: [
+    { x: 550,  floorY: FLOOR_Y_LOWER, facing: -1, crouch: false, type: 'grunt'    },
+  ]},
+  { x: 620,  fired: false, spawns: [
+    { x: 740,  floorY: FLOOR_Y_LOWER, facing: -1, crouch: false, type: 'rifleman' },
+    { x: 760,  floorY: FLOOR_Y_UPPER, facing: -1, crouch: true,  type: 'rifleman' },
+  ]},
+  { x: 840,  fired: false, spawns: [
+    { x: 950,  floorY: FLOOR_Y_LOWER, facing: -1, crouch: false, type: 'grunt'    },
+    { x: 970,  floorY: FLOOR_Y_LOWER, facing: -1, crouch: false, type: 'grunt'    },
+  ]},
+  { x: 1020, fired: false, spawns: [
+    { x: 1120, floorY: FLOOR_Y_UPPER, facing: -1, crouch: false, type: 'rifleman' },
+  ]},
+  { x: 1160, fired: false, spawns: [
+    { x: 1280, floorY: FLOOR_Y_LOWER, facing: -1, crouch: false, type: 'rifleman' },
+    { x: 1300, floorY: FLOOR_Y_LOWER, facing: -1, crouch: true,  type: 'rifleman' },
+    { x: 1260, floorY: FLOOR_Y_UPPER, facing: -1, crouch: false, type: 'grunt'    },
+  ]},
+  { x: 1360, fired: false, spawns: [
+    { x: 1460, floorY: FLOOR_Y_LOWER, facing: -1, crouch: false, type: 'grunt'    },
+    { x: 1490, floorY: FLOOR_Y_UPPER, facing: -1, crouch: false, type: 'rifleman' },
+  ]},
 ];

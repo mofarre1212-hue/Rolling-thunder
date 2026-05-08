@@ -29,7 +29,7 @@ export const MACHINEGUN_FIRE_RATE = 8; // frames between shots
 export const BULLET_W = 6;
 export const BULLET_H = 3;
 export const PLAYER_BULLET_Y_STAND  = 10; // offset from entity top
-export const PLAYER_BULLET_Y_CROUCH = 18;
+export const PLAYER_BULLET_Y_CROUCH = 8;  // matches sprite gun at row 8
 
 // Player health / damage
 export const PLAYER_MAX_HP      = 3;
@@ -51,7 +51,18 @@ export const ENEMY_SHOOT_RANGE  = 160;
 export const ENEMY_SHOOT_COOLDOWN = 90; // frames between enemy shots
 export const ENEMY_BULLET_SPD   = 3;
 export const ENEMY_BULLET_Y_STAND  = 10;
-export const ENEMY_BULLET_Y_CROUCH = 18;
+export const ENEMY_BULLET_Y_CROUCH = 8;  // matches sprite gun at row 8
+
+// Enemy AI timing / tuning
+export const ENEMY_CHARGE_SPD      = 1.2;
+export const ENEMY_MELEE_RANGE     = 16;
+export const ENEMY_AIM_FRAMES      = 45;
+export const ENEMY_ALERT_FRAMES    = 25;
+export const ENEMY_HURT_FRAMES     = 20;
+export const ENEMY_DEATH_FRAMES    = 50;
+export const ENEMY_MAX_ACTIVE      = 6;
+export const ENEMY_SCORE_GRUNT     = 100;
+export const ENEMY_SCORE_RIFLEMAN  = 200;
 
 // Doors
 export const DOOR_W = 16;
